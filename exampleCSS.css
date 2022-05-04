@@ -1,0 +1,7 @@
+.imprint-en:lang(en),
+.imprint-de:lang(de) {
+    display: inherit !important;
+}
+.imprint {
+    display: none;
+}

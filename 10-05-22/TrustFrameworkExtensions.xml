@@ -1,0 +1,349 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TrustFrameworkPolicy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" PolicySchemaVersion="0.3.0.0" TenantId="contosob2c5.onmicrosoft.com" PolicyId="B2C_1A_TrustFrameworkExtensions" PublicPolicyUri="http://contosob2c5.onmicrosoft.com/B2C_1A_TrustFrameworkExtensions">
+
+  <BasePolicy>
+    <TenantId>contosob2c5.onmicrosoft.com</TenantId>
+    <PolicyId>B2C_1A_TrustFrameworkLocalization</PolicyId>
+  </BasePolicy>
+  <BuildingBlocks>
+    <ClaimsSchema>
+      <ClaimType Id="trustFrameworkPolicy">
+        <DisplayName>Trust Framework Policy</DisplayName>
+        <DataType>string</DataType>
+        <DefaultPartnerClaimTypes>
+          <Protocol Name="OAuth2" PartnerClaimType="tfp" />
+          <Protocol Name="OpenIdConnect" PartnerClaimType="tfp" />
+        </DefaultPartnerClaimTypes>
+      </ClaimType>
+      <ClaimType Id="givenName">
+        <DisplayName>Given Name</DisplayName>
+        <DataType>string</DataType>
+        <UserInputType>TextBox</UserInputType>
+        <PredicateValidationReference Id="FirstNameValidation" />
+      </ClaimType>
+      <ClaimType Id="surname">
+        <DisplayName>Surname</DisplayName>
+        <DataType>string</DataType>
+        <UserInputType>TextBox</UserInputType>
+        <PredicateValidationReference Id="LastNameValidation" />
+      </ClaimType>
+      <ClaimType Id="email">
+        <PredicateValidationReference Id="EmailValidation" />
+      </ClaimType>
+      <ClaimType Id="newPassword">
+        <PredicateValidationReference Id="StrongPassword" />
+      </ClaimType>
+      <ClaimType Id="reenterPassword">
+        <PredicateValidationReference Id="StrongPassword" />
+      </ClaimType>
+      <ClaimType Id="extension_TermsConsentStatus">
+        <DataType>boolean</DataType>
+        <UserInputType>CheckboxMultiSelect</UserInputType>
+      </ClaimType>
+      <ClaimType Id="extension_TermsConsentAcceptedDate">
+        <DataType>dateTime</DataType>
+      </ClaimType>
+      <ClaimType Id="extension_regSource">
+        <DisplayName>User's Registered Source</DisplayName>
+        <DataType>string</DataType>
+        <UserHelpText>Application ID from which user registered</UserHelpText>
+      </ClaimType>
+      <ClaimType Id="mobile">
+        <DataType>phoneNumber</DataType>
+     </ClaimType>
+     <ClaimType Id="oldMobile">
+      <DataType>phoneNumber</DataType>
+   </ClaimType>
+   <ClaimType Id="signInName">
+    <PredicateValidationReference Id="EmailValidation" />
+  </ClaimType>
+    </ClaimsSchema>
+    <Predicates>
+      <Predicate Id="IsFirstNameLengthBetween1And64" Method="IsLengthRange" HelpText="First Name must be between 1 and 64 characters.">
+        <Parameters>
+          <Parameter Id="Minimum">1</Parameter>
+          <Parameter Id="Maximum">64</Parameter>
+        </Parameters>
+      </Predicate>
+      <Predicate Id="IsLastNameLengthBetween1And64" Method="IsLengthRange" HelpText="Last Name must be between 1 and 64 characters.">
+        <Parameters>
+          <Parameter Id="Minimum">1</Parameter>
+          <Parameter Id="Maximum">64</Parameter>
+        </Parameters>
+      </Predicate>
+      <Predicate Id="IsBusinessNameLengthBetween1And256" Method="IsLengthRange" HelpText="Business Name must not exceed 256 characters.">
+        <Parameters>
+          <Parameter Id="Minimum">1</Parameter>
+          <Parameter Id="Maximum">256</Parameter>
+        </Parameters>
+      </Predicate>
+      <Predicate Id="IsEmailLengthBetween1And100" Method="IsLengthRange" HelpText="Email length should not exceed 100 characters.">
+        <Parameters>
+          <Parameter Id="Minimum">1</Parameter>
+          <Parameter Id="Maximum">100</Parameter>
+        </Parameters>
+      </Predicate>
+      <Predicate Id="EmailRegex" Method="MatchesRegex" HelpText="Please enter a valid email address.">
+        <Parameters>
+          <Parameter Id="RegularExpression">^[a-zA-Z0-9.!#$%&amp;'^_`{}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)$</Parameter>
+        </Parameters>
+      </Predicate>
+      <Predicate Id="IsLengthBetween8And16" Method="IsLengthRange" HelpText="Password should contain 8 to 16 characters.">
+        <Parameters>
+          <Parameter Id="Minimum">8</Parameter>
+          <Parameter Id="Maximum">16</Parameter>
+        </Parameters>
+      </Predicate>
+      <Predicate Id="AllowedAADNameCharacters" Method="MatchesRegex" HelpText="Name should only contain alphabets.">
+        <Parameters>
+          <Parameter Id="RegularExpression">^[a-zA-Z]+$</Parameter>
+        </Parameters>
+      </Predicate>
+      <Predicate Id="Lowercase" Method="IncludesCharacters" HelpText="Password should contain a lowercase letter">
+        <Parameters>
+          <Parameter Id="CharacterSet">a-z</Parameter>
+        </Parameters>
+      </Predicate>
+
+      <Predicate Id="Uppercase" Method="IncludesCharacters" HelpText="Password should contain an uppercase letter">
+        <Parameters>
+          <Parameter Id="CharacterSet">A-Z</Parameter>
+        </Parameters>
+      </Predicate>
+
+      <Predicate Id="Number" Method="IncludesCharacters" HelpText="Password should contain a digit">
+        <Parameters>
+          <Parameter Id="CharacterSet">0-9</Parameter>
+        </Parameters>
+      </Predicate>
+
+      <Predicate Id="Symbol" Method="IncludesCharacters" HelpText="Password should contain a symbol">
+        <Parameters>
+          <Parameter Id="CharacterSet">@#$%^&amp;*\-_+=[]{}|\\:',.?/`~"();!</Parameter>
+        </Parameters>
+      </Predicate>
+      <Predicate Id="DisallowedWhitespace" Method="MatchesRegex" HelpText="Password must not contain whitespaces.">
+        <Parameters>
+          <Parameter Id="RegularExpression">^\S*$</Parameter>
+        </Parameters>
+      </Predicate>
+
+      <Predicate Id="internationalOrNationalPhoneNumber" Method="MatchesRegex">
+        <UserHelpText>The value entered needs to be a phone number.</UserHelpText>
+        <Parameters>
+          <!--
+              This regex will match a string with an optional leading "+", 4 to 16 digits, and any number of dashes, parentheses, and spaces, in any order.
+              It is intentionally overinclusive to allow the user to continue their journey with any input that might be an international or national phone number 
+              in any country with any customary punctuation/formatting. In this policy, the ConvertStringToPhoneNumberClaim claims converter will do the the final validation, 
+              ignoring the dashes, parentheses, and spaces.
+            -->
+          <Parameter Id="RegularExpression">^\+?(?:[-()\s]*\d[-()\s]*){4,16}$</Parameter>
+        </Parameters>
+      </Predicate>
+      <Predicate Id="noLeadingPlus" Method="MatchesRegex">
+        <UserHelpText>The national number should not include a country code.</UserHelpText>
+        <Parameters>
+          <!-- Combine this with the predicate above to match only a national phone number -->
+          <Parameter Id="RegularExpression">^[^\\+]+$</Parameter>
+        </Parameters>
+      </Predicate>
+    </Predicates>
+    <PredicateValidations>
+      <PredicateValidation Id="FirstNameValidation">
+        <PredicateGroups>
+          <PredicateGroup Id="AllowedAADCharactersGroup">
+            <PredicateReferences>
+              <PredicateReference Id="AllowedAADNameCharacters" />
+            </PredicateReferences>
+          </PredicateGroup>
+          <PredicateGroup Id="LengthGroup">
+            <PredicateReferences>
+              <PredicateReference Id="IsFirstNameLengthBetween1And64" />
+            </PredicateReferences>
+          </PredicateGroup>
+        </PredicateGroups>
+      </PredicateValidation>
+      <PredicateValidation Id="LastNameValidation">
+        <PredicateGroups>
+          <PredicateGroup Id="AllowedAADCharactersGroup">
+            <PredicateReferences>
+              <PredicateReference Id="AllowedAADNameCharacters" />
+            </PredicateReferences>
+          </PredicateGroup>
+          <PredicateGroup Id="LengthGroup">
+            <PredicateReferences>
+              <PredicateReference Id="IsLastNameLengthBetween1And64" />
+            </PredicateReferences>
+          </PredicateGroup>
+        </PredicateGroups>
+      </PredicateValidation>
+      <PredicateValidation Id="EmailValidation">
+        <PredicateGroups>
+          <PredicateGroup Id="EmailRegex">
+            <PredicateReferences>
+              <PredicateReference Id="EmailRegex" />
+            </PredicateReferences>
+          </PredicateGroup>
+          <PredicateGroup Id="LengthGroup">
+            <PredicateReferences>
+              <PredicateReference Id="IsEmailLengthBetween1And100" />
+            </PredicateReferences>
+          </PredicateGroup>
+        </PredicateGroups>
+      </PredicateValidation>
+      <PredicateValidation Id="StrongPassword">
+        <PredicateGroups>
+          <PredicateGroup Id="DisallowedWhitespaceGroup">
+            <PredicateReferences>
+              <PredicateReference Id="DisallowedWhitespace" />
+            </PredicateReferences>
+          </PredicateGroup>
+          <PredicateGroup Id="LowerCaseGroup">
+            <PredicateReferences>
+              <PredicateReference Id="Lowercase" />
+            </PredicateReferences>
+          </PredicateGroup>
+          <PredicateGroup Id="UpperCaseGroup">
+            <PredicateReferences>
+              <PredicateReference Id="Uppercase" />
+            </PredicateReferences>
+          </PredicateGroup>
+          <PredicateGroup Id="NumberGroup">
+            <PredicateReferences>
+              <PredicateReference Id="Number" />
+            </PredicateReferences>
+          </PredicateGroup>
+          <PredicateGroup Id="SymbolGroup">
+            <PredicateReferences>
+              <PredicateReference Id="Symbol" />
+            </PredicateReferences>
+          </PredicateGroup>
+          <PredicateGroup Id="LengthGroup">
+            <PredicateReferences>
+              <PredicateReference Id="IsLengthBetween8And16" />
+            </PredicateReferences>
+          </PredicateGroup>
+        </PredicateGroups>
+      </PredicateValidation>
+      <PredicateValidation Id="nationalNumber">
+        <PredicateGroups>
+          <PredicateGroup Id="internationalOrNationalPhoneNumber">
+            <PredicateReferences>
+              <PredicateReference Id="internationalOrNationalPhoneNumber" />
+            </PredicateReferences>
+          </PredicateGroup>
+          <PredicateGroup Id="noLeadingPlus">
+            <PredicateReferences>
+              <PredicateReference Id="noLeadingPlus" />
+            </PredicateReferences>
+          </PredicateGroup>
+        </PredicateGroups>
+      </PredicateValidation>
+      <PredicateValidation Id="internationalOrNationalPhoneNumber">
+        <PredicateGroups>
+          <PredicateGroup Id="internationalOrNationalPhoneNumber">
+            <UserHelpText>Please enter a valid phone number.</UserHelpText>
+            <PredicateReferences>
+              <PredicateReference Id="internationalOrNationalPhoneNumber" />
+            </PredicateReferences>
+          </PredicateGroup>
+        </PredicateGroups>
+      </PredicateValidation>
+    </PredicateValidations>
+    <ClaimsTransformations>
+      <ClaimsTransformation Id="GetSystemDateTime" TransformationMethod="GetCurrentDateTime">
+        <OutputClaims>
+          <OutputClaim ClaimTypeReferenceId="extension_TermsConsentAcceptedDate" TransformationClaimType="currentDateTime" />
+        </OutputClaims>
+      </ClaimsTransformation>
+      <ClaimsTransformation Id="CreateUserPrincipalName" TransformationMethod="FormatStringClaim">
+        <InputClaims>
+          <InputClaim ClaimTypeReferenceId="upnUserName" TransformationClaimType="inputClaim" />
+        </InputClaims>
+        <InputParameters>
+          <InputParameter Id="stringFormat" DataType="string" Value="cpim_{0}@{RelyingPartyTenantId}" />
+        </InputParameters>
+        <OutputClaims>
+          <OutputClaim ClaimTypeReferenceId="userPrincipalName" TransformationClaimType="outputClaim" />
+        </OutputClaims>
+      </ClaimsTransformation>
+      <ClaimsTransformation Id="CreateDisplayNameFromFirstNameAndLastName" TransformationMethod="FormatStringMultipleClaims">
+        <InputClaims>
+          <InputClaim ClaimTypeReferenceId="givenName" TransformationClaimType="inputClaim1" />
+          <InputClaim ClaimTypeReferenceId="surname" TransformationClaimType="inputClaim2" />
+        </InputClaims>
+        <InputParameters>
+          <InputParameter Id="stringFormat" DataType="string" Value="{0} {1}" />
+        </InputParameters>
+        <OutputClaims>
+          <OutputClaim ClaimTypeReferenceId="displayName" TransformationClaimType="outputClaim" />
+        </OutputClaims>
+      </ClaimsTransformation>
+    </ClaimsTransformations>
+  </BuildingBlocks>
+
+  <ClaimsProviders>
+
+    <ClaimsProvider>
+      <DisplayName>Facebook</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="Facebook-OAUTH">
+          <Metadata>
+            <Item Key="client_id">facebook_clientid</Item>
+            <Item Key="scope">email public_profile</Item>
+            <Item Key="ClaimsEndpoint">https://graph.facebook.com/me?fields=id,first_name,last_name,name,email</Item>
+          </Metadata>
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+    <ClaimsProvider>
+      <DisplayName>Custom B2C attribute</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="AAD-Common">
+          <DisplayName>Azure Active Directory</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.AzureActiveDirectoryProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <!--Insert b2c-extensions-app application ID here, for example: 11111111-1111-1111-1111-111111111111-->
+            <Item Key="ClientId">a8c3fff3-07c8-4737-95b9-b1351be5f42a</Item>
+            <!--Insert b2c-extensions-app application ObjectId here, for example: 22222222-2222-2222-2222-222222222222-->
+            <Item Key="ApplicationObjectId">f54266db-4480-41fd-b397-39f0b5d50634</Item>
+          </Metadata>
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+    <ClaimsProvider>
+      <DisplayName>Local Account SignIn</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="login-NonInteractive">
+          <Metadata>
+            <Item Key="client_id">98bd6d9a-302a-45f7-8bdd-1cb3eccd3b54</Item>
+            <Item Key="IdTokenAudience">964e200e-6cb4-4106-a846-fbe7bb0110b7</Item>
+          </Metadata>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="98bd6d9a-302a-45f7-8bdd-1cb3eccd3b54" />
+            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="964e200e-6cb4-4106-a846-fbe7bb0110b7" />
+          </InputClaims>
+        </TechnicalProfile>
+        <TechnicalProfile Id="AAD-UserWriteUsingLogonEmail">
+          <Metadata>
+            <Item Key="Operation">Write</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalAlreadyExists">true</Item>
+          </Metadata>
+          <IncludeInSso>false</IncludeInSso>
+          <PersistedClaims>
+            <PersistedClaim ClaimTypeReferenceId="passwordPolicies" PartnerClaimType="passwordPolicies" DefaultValue="DisablePasswordExpiration,DisableStrongPassword" AlwaysUseDefaultValue="true" />
+          </PersistedClaims>
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+  </ClaimsProviders>
+
+  <!--UserJourneys>
+	
+	</UserJourneys-->
+
+</TrustFrameworkPolicy>

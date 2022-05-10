@@ -1,0 +1,168 @@
+﻿<TrustFrameworkPolicy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" PolicySchemaVersion="0.3.0.0" TenantId="contosob2c5.onmicrosoft.com" PolicyId="B2C_1A_SendGridExtensions" PublicPolicyUri="http://contosob2c5.onmicrosoft.com/B2C_1A_SendGridExtensions">
+  <BasePolicy>
+    <TenantId>contosob2c5.onmicrosoft.com</TenantId>
+	<PolicyId>B2C_1A_TrustFrameworkExtensions</PolicyId>
+  </BasePolicy>
+  <BuildingBlocks>
+    <ClaimsSchema>
+      <ClaimType Id="Otp">
+        <DisplayName>Secondary One-time password</DisplayName>
+        <DataType>string</DataType>
+      </ClaimType>
+      <ClaimType Id="emailRequestBody">
+        <DisplayName>SendGrid request body</DisplayName>
+        <DataType>string</DataType>
+      </ClaimType>
+      <ClaimType Id="VerificationCode">
+        <DisplayName>Secondary Verification Code</DisplayName>
+        <DataType>string</DataType>
+        <UserHelpText>Enter your email verification code</UserHelpText>
+        <UserInputType>TextBox</UserInputType>
+      </ClaimType>
+      <ClaimType Id="subject">
+        <DisplayName>Email subject</DisplayName>
+        <DataType>string</DataType>
+      </ClaimType>
+      <ClaimType Id="message">
+        <DisplayName>Email message</DisplayName>
+        <DataType>string</DataType>
+      </ClaimType>
+      <ClaimType Id="codeIntro">
+        <DisplayName>Email code introduction</DisplayName>
+        <DataType>string</DataType>
+      </ClaimType>
+      <ClaimType Id="signature">
+        <DisplayName>Email signature</DisplayName>
+        <DataType>string</DataType>
+      </ClaimType>
+
+    <ClaimType Id="emailbannertitle">
+        <DisplayName>Email title banner</DisplayName>
+        <DataType>string</DataType>
+      </ClaimType>
+      <ClaimType Id="emailthanksverifyingmessage">
+        <DisplayName>Email title banner</DisplayName>
+        <DataType>string</DataType>
+      </ClaimType>
+    </ClaimsSchema>
+    <ClaimsTransformations>
+      <ClaimsTransformation Id="GetLocalizedStringsForEmail" TransformationMethod="GetLocalizedStringsTransformation">
+        <OutputClaims>
+          <OutputClaim ClaimTypeReferenceId="subject" TransformationClaimType="email_subject" />
+          <OutputClaim ClaimTypeReferenceId="message" TransformationClaimType="email_message" />
+          <OutputClaim ClaimTypeReferenceId="signature" TransformationClaimType="email_signature" />
+          <OutputClaim ClaimTypeReferenceId="codeIntro" TransformationClaimType="email_code" />
+          <OutputClaim ClaimTypeReferenceId="emailbannertitle" TransformationClaimType="email_banner_title" />
+          <OutputClaim ClaimTypeReferenceId="emailthanksverifyingmessage" TransformationClaimType="email_thanks_veriying_message" />
+        </OutputClaims>
+      </ClaimsTransformation>
+      <ClaimsTransformation Id="GenerateEmailRequestBody" TransformationMethod="GenerateJson">
+        <InputClaims>
+          <InputClaim ClaimTypeReferenceId="email" TransformationClaimType="personalizations.0.to.0.email" />
+          <InputClaim ClaimTypeReferenceId="subject" TransformationClaimType="personalizations.0.dynamic_template_data.subject" />
+          <InputClaim ClaimTypeReferenceId="otp" TransformationClaimType="personalizations.0.dynamic_template_data.otp" />
+          <InputClaim ClaimTypeReferenceId="email" TransformationClaimType="personalizations.0.dynamic_template_data.email" />
+          <!-- <InputClaim ClaimTypeReferenceId="message" TransformationClaimType="personalizations.0.dynamic_template_data.message" /> -->
+          <!-- <InputClaim ClaimTypeReferenceId="codeIntro" TransformationClaimType="personalizations.0.dynamic_template_data.codeIntro" /> -->
+          <InputClaim ClaimTypeReferenceId="signature" TransformationClaimType="personalizations.0.dynamic_template_data.signature" />
+          <InputClaim ClaimTypeReferenceId="emailbannertitle" TransformationClaimType="personalizations.0.dynamic_template_data.emailbannertitle" />
+          <InputClaim ClaimTypeReferenceId="codeIntro" TransformationClaimType="personalizations.0.dynamic_template_data.codedesc" />
+          <InputClaim ClaimTypeReferenceId="emailthanksverifyingmessage" TransformationClaimType="personalizations.0.dynamic_template_data.thanksverifyingmessage" />
+        </InputClaims>
+        <InputParameters>
+          <!-- TBD <InputParameter Id="template_id" DataType="string" Value="yoursendgridtemplateid"/> -->
+          <InputParameter Id="template_id" DataType="string" Value="d-fe1d533b041942028f268def242cbba5" />
+          <InputParameter Id="from.email" DataType="string" Value="ciam@basf.com" />
+        </InputParameters>
+        <OutputClaims>
+          <OutputClaim ClaimTypeReferenceId="emailRequestBody" TransformationClaimType="outputClaim" />
+        </OutputClaims>
+      </ClaimsTransformation>
+    </ClaimsTransformations>
+    <DisplayControls>
+      <DisplayControl Id="emailVerificationControl" UserInterfaceControlType="VerificationControl">
+        <DisplayClaims>
+          <DisplayClaim ClaimTypeReferenceId="email" Required="true" />
+          <DisplayClaim ClaimTypeReferenceId="verificationCode" ControlClaimType="VerificationCode" Required="true" />
+        </DisplayClaims>
+        <OutputClaims>
+          <OutputClaim ClaimTypeReferenceId="email" />
+        </OutputClaims>
+        <Actions>
+          <Action Id="SendCode">
+            <ValidationClaimsExchange>
+              <ValidationClaimsExchangeTechnicalProfile TechnicalProfileReferenceId="GenerateOtp" />
+              <ValidationClaimsExchangeTechnicalProfile TechnicalProfileReferenceId="SendOtp" />
+            </ValidationClaimsExchange>
+          </Action>
+          <Action Id="VerifyCode">
+            <ValidationClaimsExchange>
+              <ValidationClaimsExchangeTechnicalProfile TechnicalProfileReferenceId="VerifyOtp" />
+            </ValidationClaimsExchange>
+          </Action>
+        </Actions>
+      </DisplayControl>
+    </DisplayControls>
+  </BuildingBlocks>
+  <ClaimsProviders>
+    <ClaimsProvider>
+      <DisplayName>One time password technical profiles</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="GenerateOtp">
+          <DisplayName>Generate one time password</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.OneTimePasswordProtocolProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="Operation">GenerateCode</Item>
+            <!-- <Item Key="CodeExpirationInSeconds">1800</Item> -->
+            <Item Key="CodeExpirationInSeconds">120</Item>
+            <Item Key="CodeLength">6</Item>
+            <Item Key="CharacterSet">0-9</Item>
+            <Item Key="ReuseSameCode">false</Item>
+            <Item Key="MaxNumAttempts">20</Item>
+          </Metadata>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="email" PartnerClaimType="identifier" />
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="otp" PartnerClaimType="otpGenerated" />
+          </OutputClaims>
+        </TechnicalProfile>
+        <TechnicalProfile Id="VerifyOtp">
+          <DisplayName>Verify one time password</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.OneTimePasswordProtocolProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="Operation">VerifyCode</Item>
+          </Metadata>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="email" PartnerClaimType="identifier" />
+            <InputClaim ClaimTypeReferenceId="verificationCode" PartnerClaimType="otpToVerify" />
+          </InputClaims>
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+    <ClaimsProvider>
+      <DisplayName>RestfulProvider</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="SendOtp">
+          <DisplayName>Use SendGrid's email API to send the code the the user</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="ServiceUrl">https://api.sendgrid.com/v3/mail/send</Item>
+            <Item Key="AuthenticationType">Bearer</Item>
+            <Item Key="SendClaimsIn">Body</Item>
+            <Item Key="ClaimUsedForRequestPayload">emailRequestBody</Item>
+          </Metadata>
+          <CryptographicKeys>
+            <Key Id="BearerAuthenticationToken" StorageReferenceId="B2C_1A_SendGridSecret" />
+          </CryptographicKeys>
+          <InputClaimsTransformations>
+            <InputClaimsTransformation ReferenceId="GenerateEmailRequestBody" />
+          </InputClaimsTransformations>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="emailRequestBody" />
+          </InputClaims>
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+  </ClaimsProviders>
+</TrustFrameworkPolicy>

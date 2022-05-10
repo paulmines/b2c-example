@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<TrustFrameworkPolicy
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06"
+  PolicySchemaVersion="0.3.0.0"
+  TenantId="contosob2c5.onmicrosoft.com"
+  PolicyId="B2C_1A_ANZ_COMMONREGISTRATION_v1"
+  PublicPolicyUri="http://contosob2c5.onmicrosoft.com/B2C_1A_ANZ_COMMONREGISTRATION_v1">
+
+  <BasePolicy>
+    <TenantId>contosob2c5.onmicrosoft.com</TenantId>
+    <PolicyId>B2C_1A_ANZ_TrustFrameworkExtensions</PolicyId>
+  </BasePolicy>
+  <BuildingBlocks>
+    <ContentDefinitions>
+      <ContentDefinition Id="api.mobileverification">
+        <LoadUri>~/tenant/templates/AzureBlue/selfAsserted.cshtml</LoadUri>
+        <!-- <LoadUri>https://apacb2cextstorage.blob.core.windows.net/basf-dev/anz/html/anz-registration_step2.html</LoadUri> -->
+        <RecoveryUri>~/common/default_page_error.html</RecoveryUri>
+        <DataUri>urn:com:microsoft:aad:b2c:elements:contract:selfasserted:2.1.10</DataUri>
+        <Metadata>
+          <Item Key="DisplayName">Verify phone to sign up</Item>
+        </Metadata>
+        <LocalizedResourcesReferences MergeBehavior="Prepend">
+          <LocalizedResourcesReference Language="en" LocalizedResourcesReferenceId="api.mobileverification.en" />
+        </LocalizedResourcesReferences>
+      </ContentDefinition>
+    </ContentDefinitions>
+  </BuildingBlocks>
+  <ClaimsProviders>
+    <ClaimsProvider>
+      <DisplayName>Local Account Signup</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="UserSignup">
+          <DisplayName>Email signup</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="IpAddressClaimReferenceId">IpAddress</Item>
+            <Item Key="ContentDefinitionReferenceId">api.usersignup</Item>
+            <Item Key="setting.showCancelButton">false</Item>
+          </Metadata>
+          <CryptographicKeys>
+            <Key Id="issuer_secret" StorageReferenceId="B2C_1A_TokenSigningKeyContainer" />
+          </CryptographicKeys>
+          <InputClaimsTransformations>
+            <InputClaimsTransformation ReferenceId="GetLocalizedStringForMessage" />
+          </InputClaimsTransformations>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="email" />
+            <InputClaim ClaimTypeReferenceId="password_message" />
+            <InputClaim ClaimTypeReferenceId="signIn_message" />
+            <InputClaim ClaimTypeReferenceId="createAccount_message" />
+            <InputClaim ClaimTypeReferenceId="mobileVerification_message" />
+            <InputClaim ClaimTypeReferenceId="termsConsentLink_message" />
+            <InputClaim ClaimTypeReferenceId="my_seed_role_text" />
+            <InputClaim ClaimTypeReferenceId="contact_customer_care_text" />
+            <InputClaim ClaimTypeReferenceId="termsConsentLink_message" />
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="signIn_message" />
+            <OutputClaim ClaimTypeReferenceId="createAccount_message" />
+            <OutputClaim ClaimTypeReferenceId="mobileVerification_message" />
+            <OutputClaim ClaimTypeReferenceId="givenName" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="surname" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="extension_business_name" />
+            <OutputClaim ClaimTypeReferenceId="extension_services" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="extension_roles" Required="true"/>
+            <OutputClaim ClaimTypeReferenceId="my_seed_role_text" />
+            <OutputClaim ClaimTypeReferenceId="contact_customer_care_text" />
+            <OutputClaim ClaimTypeReferenceId="objectId" />
+            <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInNames.emailAddress" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="newPassword" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="password_message" />
+            <OutputClaim ClaimTypeReferenceId="reenterPassword" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="extension_marketingConsent" />
+            <OutputClaim ClaimTypeReferenceId="extension_TermsConsentStatus" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="termsConsentLink_message" />
+            <OutputClaim ClaimTypeReferenceId="executed-SelfAsserted-Input" DefaultValue="true" />
+            <OutputClaim ClaimTypeReferenceId="authenticationSource" />
+            <OutputClaim ClaimTypeReferenceId="newUser" />
+          </OutputClaims>
+          <ValidationTechnicalProfiles>
+            <ValidationTechnicalProfile ReferenceId="AAD-UserWriteUsingLogonEmail" />
+          </ValidationTechnicalProfiles>
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
+        </TechnicalProfile>
+        <TechnicalProfile Id="MobileNumberVerification">
+          <DisplayName>Phone</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <InputClaimsTransformations>
+             <InputClaimsTransformation ReferenceId="GetLocalizedStringForMessage" />
+             <InputClaimsTransformation ReferenceId="GetLocalizedStringForMobileVerification" />
+          </InputClaimsTransformations>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="createAccount_message" />
+            <InputClaim ClaimTypeReferenceId="mobileVerification_message" />
+             <InputClaim ClaimTypeReferenceId="mobile_number_verification_text" />
+             <InputClaim ClaimTypeReferenceId="objectId" />
+          </InputClaims>
+          <DisplayClaims>
+              <DisplayClaim ClaimTypeReferenceId="createAccount_message" />
+              <DisplayClaim ClaimTypeReferenceId="mobileVerification_message" />
+             <DisplayClaim DisplayControlReferenceId="phoneVerificationControlMobileNumber" />
+             <DisplayClaim ClaimTypeReferenceId="mobile_number_verification_text" />
+          </DisplayClaims>
+          <OutputClaims>
+             <OutputClaim ClaimTypeReferenceId="objectId" />
+             <OutputClaim ClaimTypeReferenceId="mobile" />
+             <OutputClaim ClaimTypeReferenceId="mobile_number_verification_text" />
+          </OutputClaims>
+       </TechnicalProfile>
+       <TechnicalProfile Id="UserCreationSucess">
+        <DisplayName>Email signup</DisplayName>
+        <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+        <Metadata>
+          <Item Key="ContentDefinitionReferenceId">api.usersignupsuccess</Item>
+          <Item Key="setting.showCancelButton">false</Item>
+        </Metadata>
+        <InputClaimsTransformations>
+          <InputClaimsTransformation ReferenceId="GetLocalizedStringForMessage" />
+        </InputClaimsTransformations>
+        <InputClaims>
+          <InputClaim ClaimTypeReferenceId="success_created_text" />
+        </InputClaims>
+        <OutputClaims>
+          <OutputClaim ClaimTypeReferenceId="success_created_text" />
+        </OutputClaims>
+        <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
+      </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+  </ClaimsProviders>
+<UserJourneys>
+  <UserJourney Id="UserSignup">
+    <OrchestrationSteps>
+      <OrchestrationStep Order="1" Type="ClaimsExchange">
+        <ClaimsExchanges>
+          <ClaimsExchange Id="LocalAccountSignupExchange" TechnicalProfileReferenceId="UserSignup" />
+        </ClaimsExchanges>
+      </OrchestrationStep>
+      <OrchestrationStep Order="2" Type="ClaimsExchange">
+        <ClaimsExchanges>
+          <ClaimsExchange Id="RetrieveCountryCodeExchange" TechnicalProfileReferenceId="RetrieveCountryCode" />
+        </ClaimsExchanges>
+      </OrchestrationStep>
+      <OrchestrationStep Order="3" Type="ClaimsExchange">
+        <ClaimsExchanges>
+          <ClaimsExchange Id="MobileNumberExchange" TechnicalProfileReferenceId="MobileNumberVerification" />
+        </ClaimsExchanges>
+      </OrchestrationStep>
+      <OrchestrationStep Order="4" Type="ClaimsExchange">
+        <ClaimsExchanges>
+          <ClaimsExchange Id="UserCreationSucessExchange" TechnicalProfileReferenceId="UserCreationSucess" />
+        </ClaimsExchanges>
+      </OrchestrationStep>
+      <OrchestrationStep Order="5" Type="ClaimsExchange">
+        <ClaimsExchanges>
+          <ClaimsExchange Id="GetUserInfoExchange" TechnicalProfileReferenceId="GetUserInfoUsingObjectId" />
+        </ClaimsExchanges>
+      </OrchestrationStep>
+      <OrchestrationStep Order="6" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+    </OrchestrationSteps>
+  </UserJourney>
+</UserJourneys>
+  <RelyingParty>
+    <DefaultUserJourney ReferenceId="UserSignup" />
+    <UserJourneyBehaviors>
+      <ScriptExecution>Allow</ScriptExecution>
+    </UserJourneyBehaviors>
+    <TechnicalProfile Id="PolicyProfile">
+      <DisplayName>PolicyProfile</DisplayName>
+      <Protocol Name="OpenIdConnect" />
+      <OutputClaims>
+        <OutputClaim ClaimTypeReferenceId="givenName" PartnerClaimType="firstName"/>
+        <OutputClaim ClaimTypeReferenceId="surname" PartnerClaimType="lastName"/>
+        <OutputClaim ClaimTypeReferenceId="extension_business_name" PartnerClaimType="businessName"/>
+        <OutputClaim ClaimTypeReferenceId="extension_services" PartnerClaimType="services"/>
+        <OutputClaim ClaimTypeReferenceId="extension_roles" PartnerClaimType="roles"/>
+        <OutputClaim ClaimTypeReferenceId="email" />
+        <OutputClaim ClaimTypeReferenceId="mobile" PartnerClaimType="phoneNumber"/>
+        <OutputClaim ClaimTypeReferenceId="extension_marketingConsent" PartnerClaimType="marketingConsent"/>
+        <OutputClaim ClaimTypeReferenceId="extension_TermsConsentStatus" PartnerClaimType="termsConsentStatus"/>
+        <OutputClaim ClaimTypeReferenceId="extension_TermsConsentAcceptedDate" PartnerClaimType="termsConsentAcceptedDate"/>
+        <OutputClaim ClaimTypeReferenceId="extension_identityVerified" PartnerClaimType="identityVerified"/>
+        <OutputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="sub"/>
+        <OutputClaim ClaimTypeReferenceId="tenantId" AlwaysUseDefaultValue="true" DefaultValue="{Policy:TenantObjectId}" />
+        <OutputClaim ClaimTypeReferenceId="trustFrameworkPolicy" PartnerClaimType="tfp" Required="true" DefaultValue="{policy}" />
+      </OutputClaims>
+      <SubjectNamingInfo ClaimType="sub" />
+    </TechnicalProfile>
+  </RelyingParty>
+</TrustFrameworkPolicy>

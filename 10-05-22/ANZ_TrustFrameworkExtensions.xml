@@ -1,0 +1,410 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TrustFrameworkPolicy xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" PolicySchemaVersion="0.3.0.0" TenantId="contosob2c5.onmicrosoft.com" PolicyId="B2C_1A_ANZ_TrustFrameworkExtensions" PublicPolicyUri="http://contosob2c5.onmicrosoft.com/B2C_1A_ANZ_TrustFrameworkExtensions">
+   <BasePolicy>
+      <TenantId>contosob2c5.onmicrosoft.com</TenantId>
+      <PolicyId>B2C_1A_PhoneNumberVerification</PolicyId>
+   </BasePolicy>
+   <BuildingBlocks>
+      <ClaimsSchema>
+         <ClaimType Id="extension_identityVerified">
+            <DisplayName>Identity Verified</DisplayName>
+            <DataType>boolean</DataType>
+         </ClaimType>
+         <ClaimType Id="extension_business_name">
+            <DisplayName>Business Name</DisplayName>
+            <DataType>string</DataType>
+            <UserInputType>TextBox</UserInputType>
+            <Restriction>
+               <Pattern RegularExpression="^.{0,256}$" HelpText="Business Name must not exceed 256 characters." />
+            </Restriction>
+         </ClaimType>
+         <ClaimType Id="extension_services">
+            <DisplayName>I'm interested in</DisplayName>
+            <DataType>string</DataType>
+            <UserInputType>CheckboxMultiSelect</UserInputType>
+            <Restriction>
+               <Enumeration Text="Crop Solutions" Value="Crop Solutions" SelectByDefault="false" />
+               <Enumeration Text="MySeed " Value="MySeed" SelectByDefault="false" />
+            </Restriction>
+         </ClaimType>
+         <ClaimType Id="extension_roles">
+            <DisplayName>Select your role</DisplayName>
+            <DataType>string</DataType>
+            <UserInputType>RadioSingleSelect</UserInputType>
+            <Restriction>
+               <Enumeration Text="Grower" Value="CS_Grower" SelectByDefault="false" />
+               <Enumeration Text="Agent " Value="CS_Agent" SelectByDefault="false" />
+               <Enumeration Text="Independent Advisor" Value="CS_Independent_Advisor" SelectByDefault="false" />
+            </Restriction>
+         </ClaimType>
+         <ClaimType Id="extension_marketingConsent">
+            <DataType>boolean</DataType>
+            <UserInputType>CheckboxMultiSelect</UserInputType>
+         </ClaimType>
+         <ClaimType Id="signIn_message">
+            <DataType>string</DataType>
+            <UserInputType>Paragraph</UserInputType>
+            <Restriction>
+               <Enumeration Text="signIn_message" Value="Already have an account? &lt;Sign In&gt;" />
+            </Restriction>
+         </ClaimType>
+         <ClaimType Id="mobile_number_verification_text">
+            <DataType>string</DataType>
+            <UserInputType>Paragraph</UserInputType>
+            <Restriction>
+               <Enumeration Text="mobileNumberVerificationText" Value="We&quot;ll send you a verification code to your registered mobile number." />
+            </Restriction>
+         </ClaimType>
+         <ClaimType Id="password_message">
+            <DataType>string</DataType>
+            <AdminHelpText>A claim that displays the password message</AdminHelpText>
+            <UserInputType>Paragraph</UserInputType>
+            <Restriction>
+               <Enumeration Text="password_message" Value="Minimum of 8 characters including upper and lower case letters, numbers and symbols." />
+            </Restriction>
+         </ClaimType>
+         <ClaimType Id="termsConsentLink_message">
+            <DataType>string</DataType>
+            <UserInputType>Paragraph</UserInputType>
+            <Restriction>
+               <Enumeration Text="termsConsentLink_message" Value="Personal Information Collection Notice. &lt;More&gt;" />
+            </Restriction>
+         </ClaimType>
+         <ClaimType Id="extension_requiresMigration">
+          <DisplayName>Requires Migration</DisplayName>
+            <DataType>boolean</DataType>
+       </ClaimType>
+       <ClaimType Id="createAccount_message">
+         <DataType>string</DataType>
+         <UserInputType>Paragraph</UserInputType>
+         <Restriction>
+           <Enumeration Text="createAccount_message" Value="Create Account" />
+         </Restriction>
+       </ClaimType>
+       <ClaimType Id="mobileVerification_message">
+         <DataType>string</DataType>
+         <UserInputType>Paragraph</UserInputType>
+         <Restriction>
+           <Enumeration Text="mobileVerification_message" Value="Mobile Verification" />
+         </Restriction>
+       </ClaimType>
+       <ClaimType Id="success_created_text">
+         <DataType>string</DataType>
+         <UserInputType>Paragraph</UserInputType>
+         <Restriction>
+           <Enumeration Text="successCreatedText" Value="You should have an email in your inbox from &quot;qual-external-profile-management@basf.com&quot;, prompting you to verify your account. There'll be a link you can click activate the account." />
+         </Restriction>
+       </ClaimType>
+       <ClaimType Id="login_text">
+         <DataType>string</DataType>
+         <UserInputType>Paragraph</UserInputType>
+         <Restriction>
+           <Enumeration Text="loginText" Value="Signing into profile gives you access to tools, tips and information on our agricultural solutions." />
+         </Restriction>
+       </ClaimType>
+       <ClaimType Id="registration_link_text">
+         <DataType>string</DataType>
+         <UserInputType>Paragraph</UserInputType>
+         <Restriction>
+           <Enumeration Text="registrationLinkText" Value="Don't have an account? &lt;Register New Account&gt;" />
+         </Restriction>
+       </ClaimType>
+       <ClaimType Id="env">
+         <DisplayName>Environment</DisplayName>
+         <DataType>string</DataType>
+       </ClaimType>
+       <ClaimType Id="email_api_http_status">
+         <DisplayName>email api http status</DisplayName>
+         <DataType>int</DataType>
+       </ClaimType>
+       <ClaimType Id="email_address_verification_text">
+         <DataType>string</DataType>
+         <UserInputType>Paragraph</UserInputType>
+         <Restriction>
+            <Enumeration Text="emailAddressVerificationText" Value="We&quot;ll send you a verification code to your email address." />
+         </Restriction>
+      </ClaimType>
+      <ClaimType Id="myseed_role_text">
+         <DataType>string</DataType>
+         <UserInputType>Paragraph</UserInputType>
+         <Restriction>
+            <Enumeration Text="mySeedRoleText" Value="Your role for MySeed is Grower." />
+         </Restriction>
+      </ClaimType>
+      <ClaimType Id="contact_customer_care_text">
+         <DataType>string</DataType>
+         <UserInputType>Paragraph</UserInputType>
+         <Restriction>
+            <Enumeration Text="contactCustomerCareText" Value="For agents, please contact Customer Service on 1800 558 399 to have one created." />
+         </Restriction>
+      </ClaimType>
+      </ClaimsSchema>
+      <ClaimsTransformations>
+         <ClaimsTransformation Id="GetLocalizedStringForMessage" TransformationMethod="GetLocalizedStringsTransformation">
+            <OutputClaims>
+               <OutputClaim ClaimTypeReferenceId="password_message" TransformationClaimType="password_message" />
+               <OutputClaim ClaimTypeReferenceId="signIn_message" TransformationClaimType="signIn_message" />
+               <OutputClaim ClaimTypeReferenceId="termsConsentLink_message" TransformationClaimType="termsConsentLink_message" />
+               <OutputClaim ClaimTypeReferenceId="createAccount_message" TransformationClaimType="createAccount_message" />
+               <OutputClaim ClaimTypeReferenceId="mobileVerification_message" TransformationClaimType="mobileVerification_message" />
+               <OutputClaim ClaimTypeReferenceId="success_created_text" TransformationClaimType="successCreatedText" />
+               <OutputClaim ClaimTypeReferenceId="myseed_role_text" TransformationClaimType="mySeedRoleText" />
+               <OutputClaim ClaimTypeReferenceId="contact_customer_care_text" TransformationClaimType="contactCustomerCareText" />
+            </OutputClaims>
+         </ClaimsTransformation>
+         <ClaimsTransformation Id="GetLocalizedStringForMobileVerification" TransformationMethod="GetLocalizedStringsTransformation">
+            <OutputClaims>
+               <OutputClaim ClaimTypeReferenceId="mobile_number_verification_text" TransformationClaimType="mobileNumberVerificationText" />
+               <OutputClaim ClaimTypeReferenceId="email_address_verification_text" TransformationClaimType="emailAddressVerificationText" />
+            </OutputClaims>
+         </ClaimsTransformation>
+         <ClaimsTransformation Id="GetLocalizedStringForLogin" TransformationMethod="GetLocalizedStringsTransformation">
+            <OutputClaims>
+              <OutputClaim ClaimTypeReferenceId="login_text" TransformationClaimType="loginText" />
+              <OutputClaim ClaimTypeReferenceId="registration_link_text" TransformationClaimType="registrationLinkText" />
+            </OutputClaims>
+          </ClaimsTransformation>
+      </ClaimsTransformations>
+   </BuildingBlocks>
+   <ClaimsProviders>
+      <ClaimsProvider>
+         <DisplayName>Writing User Defined Claims</DisplayName>
+         <TechnicalProfiles>
+            <!-- Writing ANZ related claims while registering the user -->
+            <TechnicalProfile Id="AAD-UserWriteUsingLogonEmail">
+               <Metadata>
+                  <Item Key="Operation">Write</Item>
+                  <Item Key="RaiseErrorIfClaimsPrincipalAlreadyExists">true</Item>
+                  <Item Key="IncludeClaimResolvingInClaimsHandling">true</Item>
+               </Metadata>
+               <IncludeInSso>false</IncludeInSso>
+               <InputClaimsTransformations>
+                <InputClaimsTransformation ReferenceId="GetSystemDateTime"/>
+                <InputClaimsTransformation ReferenceId="CreateDisplayNameFromFirstNameAndLastName"/>
+              </InputClaimsTransformations>
+               <PersistedClaims>
+                  <PersistedClaim ClaimTypeReferenceId="displayName" DefaultValue="unknown" />
+                  <PersistedClaim ClaimTypeReferenceId="givenName" />
+                  <PersistedClaim ClaimTypeReferenceId="surname" />
+                  <PersistedClaim ClaimTypeReferenceId="extension_business_name" />
+                  <PersistedClaim ClaimTypeReferenceId="extension_marketingConsent" />
+                  <PersistedClaim ClaimTypeReferenceId="extension_TermsConsentStatus" />
+                  <PersistedClaim ClaimTypeReferenceId="extension_TermsConsentAcceptedDate" />
+                  <PersistedClaim ClaimTypeReferenceId="extension_identityVerified" DefaultValue="false" AlwaysUseDefaultValue="true"/>
+                  <PersistedClaim ClaimTypeReferenceId="extension_requiresMigration" DefaultValue="false" AlwaysUseDefaultValue="true"/>
+                  <PersistedClaim ClaimTypeReferenceId="extension_regSource" DefaultValue="{OIDC:ClientId}" AlwaysUseDefaultValue="true" />
+                  <PersistedClaim ClaimTypeReferenceId="extension_isMobileNumberVerified" DefaultValue="false" AlwaysUseDefaultValue="true" />
+               </PersistedClaims>
+               <OutputClaims>
+                  <OutputClaim ClaimTypeReferenceId="extension_TermsConsentAcceptedDate"/>
+                  <OutputClaim ClaimTypeReferenceId="extension_identityVerified" DefaultValue="false" AlwaysUseDefaultValue="true" />
+               </OutputClaims>
+            </TechnicalProfile>
+         </TechnicalProfiles>
+      </ClaimsProvider>
+      <ClaimsProvider>
+         <DisplayName>Local Account SignIn</DisplayName>
+         <TechnicalProfiles>
+            <!-- This technical profile uses a validation technical profile to authenticate the user. -->
+            <TechnicalProfile Id="UserSignin">
+               <DisplayName>Local Account Signin</DisplayName>
+               <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+               <Metadata>
+                  <Item Key="setting.operatingMode">Email</Item>
+                  <Item Key="ContentDefinitionReferenceId">api.usersignin</Item>
+                  <Item Key="IncludeClaimResolvingInClaimsHandling">true</Item>
+               </Metadata>
+               <IncludeInSso>false</IncludeInSso>
+               <InputClaimsTransformations>
+                  <InputClaimsTransformation ReferenceId="GetLocalizedStringForLogin"/>
+               </InputClaimsTransformations>
+               <InputClaims>
+                  <InputClaim ClaimTypeReferenceId="signInName" DefaultValue="{OIDC:LoginHint}" AlwaysUseDefaultValue="true" />
+                  <InputClaim ClaimTypeReferenceId="login_text"/>
+                  <InputClaim ClaimTypeReferenceId="registration_link_text"/>
+               </InputClaims>
+               <OutputClaims>
+                  <OutputClaim ClaimTypeReferenceId="login_text"/>
+                  <OutputClaim ClaimTypeReferenceId="signInName" Required="true" />
+                  <OutputClaim ClaimTypeReferenceId="password" Required="true" />
+                  <OutputClaim ClaimTypeReferenceId="registration_link_text"/>
+                  <OutputClaim ClaimTypeReferenceId="objectId" />
+                  <OutputClaim ClaimTypeReferenceId="authenticationSource" />
+               </OutputClaims>
+               <ValidationTechnicalProfiles>
+                  <ValidationTechnicalProfile ReferenceId="login-NonInteractive" />
+               </ValidationTechnicalProfiles>
+               <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
+            </TechnicalProfile>
+            <!-- Get User Information via Object ID -->
+            <TechnicalProfile Id="GetUserInfoUsingObjectId">
+               <Metadata>
+                  <Item Key="Operation">Read</Item>
+                  <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">true</Item>
+               </Metadata>
+               <InputClaims>
+                  <InputClaim ClaimTypeReferenceId="objectId" Required="true" />
+               </InputClaims>
+               <OutputClaims>
+                  <OutputClaim ClaimTypeReferenceId="objectId" />
+                  <OutputClaim ClaimTypeReferenceId="userPrincipalName" />
+                  <OutputClaim ClaimTypeReferenceId="displayName" />
+                  <OutputClaim ClaimTypeReferenceId="extension_TermsConsentStatus" />
+                  <OutputClaim ClaimTypeReferenceId="extension_TermsConsentAcceptedDate" />
+                  <OutputClaim ClaimTypeReferenceId="extension_identityVerified" />
+                  <OutputClaim ClaimTypeReferenceId="mobile" />
+                  <OutputClaim ClaimTypeReferenceId="signInNames.emailAddress" />
+               </OutputClaims>
+               <IncludeTechnicalProfile ReferenceId="AAD-Common" />
+            </TechnicalProfile>
+         </TechnicalProfiles>
+      </ClaimsProvider>
+      <ClaimsProvider>
+         <DisplayName>Registration confirmation email</DisplayName>
+         <TechnicalProfiles>
+           <!-- This Technical Profile sends an Varification Email to the User. -->
+           <TechnicalProfile Id="EmailSender">
+             <DisplayName>Send a magic link</DisplayName>
+             <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+             <Metadata>
+               <Item Key="ServiceUrl">https://sspregistrationconfirmation.azurewebsites.net/api/magiclinksender</Item>
+               <Item Key="AuthenticationType">Bearer</Item>
+               <Item Key="IncludeClaimResolvingInClaimsHandling">true</Item>
+               <Item Key="SendClaimsIn">Body</Item>
+             </Metadata> 
+             <CryptographicKeys>
+               <Key Id="BearerAuthenticationToken" StorageReferenceId="B2C_1A_EmailVerificationToken" />
+             </CryptographicKeys>
+             <InputClaims>
+               <InputClaim ClaimTypeReferenceId="signInName" PartnerClaimType="email"/>
+               <InputClaim ClaimTypeReferenceId="extension_services"/>
+               <InputClaim ClaimTypeReferenceId="extension_requiresMigration"/>
+               <InputClaim ClaimTypeReferenceId="env" DefaultValue="borndev" AlwaysUseDefaultValue="true"/>
+             </InputClaims>
+             <OutputClaims>
+               <OutputClaim ClaimTypeReferenceId="email_api_http_status" />
+             </OutputClaims>
+             <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+           </TechnicalProfile>
+         </TechnicalProfiles>
+       </ClaimsProvider>
+       <ClaimsProvider>
+         <DisplayName>Terms Consent Collection</DisplayName>
+         <TechnicalProfiles>
+           <TechnicalProfile Id="ConsentCollection">
+             <DisplayName>Consent Collection</DisplayName>
+             <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+             <Metadata>
+               <Item Key="ContentDefinitionReferenceId">api.consentcollection</Item>
+             </Metadata>
+             <InputClaimsTransformations>
+               <InputClaimsTransformation ReferenceId="GetLocalizedStringForMessage" />
+             </InputClaimsTransformations>
+             <InputClaims>
+               <InputClaim ClaimTypeReferenceId="extension_marketingConsent" />
+               <InputClaim ClaimTypeReferenceId="extension_TermsConsentStatus" />
+               <InputClaim ClaimTypeReferenceId="termsConsentLink_message" />
+             </InputClaims>   
+             <OutputClaims>
+               <OutputClaim ClaimTypeReferenceId="extension_TermsConsentStatus" Required="true"/>
+               <OutputClaim ClaimTypeReferenceId="extension_marketingConsent"/>
+               <OutputClaim ClaimTypeReferenceId="termsConsentLink_message" />
+               <OutputClaim ClaimTypeReferenceId="objectId"/>
+             </OutputClaims>
+             <ValidationTechnicalProfiles>
+               <ValidationTechnicalProfile ReferenceId="WriteTermsAndConditions" />
+             </ValidationTechnicalProfiles>
+           </TechnicalProfile>
+           <TechnicalProfile Id="WriteTermsAndConditions">
+             <DisplayName>Write Mobile Number</DisplayName>
+             <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.AzureActiveDirectoryProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+             <Metadata>
+               <Item Key="Operation">Write</Item>
+             </Metadata>
+             <InputClaimsTransformations>
+               <InputClaimsTransformation ReferenceId="GetSystemDateTime"/>
+             </InputClaimsTransformations>
+             <InputClaims>
+               <InputClaim ClaimTypeReferenceId="objectId" Required="true"/>
+             </InputClaims>
+             <PersistedClaims>
+               <PersistedClaim ClaimTypeReferenceId="objectId" />
+               <PersistedClaim ClaimTypeReferenceId="userPrincipalName"/>
+               <PersistedClaim ClaimTypeReferenceId="displayName"/>
+               <PersistedClaim ClaimTypeReferenceId="extension_TermsConsentStatus" DefaultValue="false"/>
+               <PersistedClaim ClaimTypeReferenceId="extension_marketingConsent" DefaultValue="false"/>
+               <PersistedClaim ClaimTypeReferenceId="extension_TermsConsentAcceptedDate"/>
+             </PersistedClaims>
+             <OutputClaims>
+               <OutputClaim ClaimTypeReferenceId="objectId" />
+             </OutputClaims>
+             <IncludeTechnicalProfile ReferenceId="AAD-Common" />
+           </TechnicalProfile>
+           <TechnicalProfile Id="UpdateNewMobileNumber">
+            <DisplayName>Phone</DisplayName>
+            <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+            <Metadata>
+              <Item Key="ContentDefinitionReferenceId">api.updatenewmobilenumber</Item>
+              <Item Key="ClaimsProviderSelectionDisplayType">TextLink</Item>
+              <Item Key="UserMessageIfClaimsTransformationInvalidPhoneNumber">Please enter a valid phone number and country code.</Item>
+            </Metadata>
+            <InputClaimsTransformations>
+              <InputClaimsTransformation ReferenceId="GetLocalizedStringForMobileVerification" />
+            </InputClaimsTransformations>
+            <InputClaims>
+              <InputClaim ClaimTypeReferenceId="mobile_number_verification_text" />
+              <InputClaim ClaimTypeReferenceId="objectId" />
+            </InputClaims>
+            <DisplayClaims>
+              <DisplayClaim DisplayControlReferenceId="phoneVerificationControlMobileNumber" />
+              <DisplayClaim ClaimTypeReferenceId="mobile_number_verification_text" />
+            </DisplayClaims>
+            <OutputClaims>
+              <OutputClaim ClaimTypeReferenceId="objectId" />
+              <OutputClaim ClaimTypeReferenceId="mobile" />
+              <OutputClaim ClaimTypeReferenceId="mobile_number_verification_text" />
+              <OutputClaim ClaimTypeReferenceId="userPrincipalName"/>
+              <OutputClaim ClaimTypeReferenceId="displayName"/>
+            </OutputClaims>
+            <ValidationTechnicalProfiles>
+              <ValidationTechnicalProfile ReferenceId="CombineCountryCodeAndNationalNumber" />
+              <ValidationTechnicalProfile ReferenceId="WriteNewMobileNumber" />
+           </ValidationTechnicalProfiles>
+          </TechnicalProfile>
+           <TechnicalProfile Id="WriteNewMobileNumber">
+            <DisplayName>Write New Mobile Number</DisplayName>
+            <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.AzureActiveDirectoryProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+            <Metadata>
+               <Item Key="Operation">Write</Item>
+            </Metadata>
+            <InputClaims>
+               <InputClaim ClaimTypeReferenceId="objectId" Required="true" />
+            </InputClaims>
+            <PersistedClaims>
+               <PersistedClaim ClaimTypeReferenceId="objectId" />
+               <PersistedClaim ClaimTypeReferenceId="mobile" />
+               <PersistedClaim ClaimTypeReferenceId="userPrincipalName" />
+               <PersistedClaim ClaimTypeReferenceId="displayName" />
+            </PersistedClaims>
+            <OutputClaims>
+               <OutputClaim ClaimTypeReferenceId="objectId" />
+               <OutputClaim ClaimTypeReferenceId="mobile" />
+            </OutputClaims>
+            <IncludeTechnicalProfile ReferenceId="AAD-Common" />
+         </TechnicalProfile>
+         </TechnicalProfiles>
+       </ClaimsProvider>
+   </ClaimsProviders>
+   <UserJourneys>
+      <UserJourney Id="UserSignin">
+         <OrchestrationSteps>
+            <OrchestrationStep Order="1" Type="ClaimsExchange">
+               <ClaimsExchanges>
+                  <ClaimsExchange Id="LocalAccountSigninExchange" TechnicalProfileReferenceId="UserSignin" />
+               </ClaimsExchanges>
+            </OrchestrationStep>
+            <OrchestrationStep Order="2" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+         </OrchestrationSteps>
+      </UserJourney>
+   </UserJourneys>
+</TrustFrameworkPolicy>

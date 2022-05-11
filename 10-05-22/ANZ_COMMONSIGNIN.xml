@@ -1,0 +1,247 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<TrustFrameworkPolicy
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06"
+  PolicySchemaVersion="0.3.0.0"
+  TenantId="contosob2c5.onmicrosoft.com"
+  PolicyId="B2C_1A_ANZ_COMMONSIGNIN"
+  PublicPolicyUri="http://contosob2c5.onmicrosoft.com/B2C_1A_ANZ_COMMONSIGNIN">
+
+  <BasePolicy>
+    <TenantId>contosob2c5.onmicrosoft.com</TenantId>
+    <PolicyId>B2C_1A_ANZ_TrustFrameworkExtensions</PolicyId>
+  </BasePolicy>
+   <BuildingBlocks>
+      <ClaimsSchema>
+       <ClaimType Id="login_forgot_text">
+         <DataType>string</DataType>
+         <UserInputType>Paragraph</UserInputType>
+         <Restriction>
+           <Enumeration Text="loginForgotText" Value="&lt;Forgot password?&gt;" />
+         </Restriction>
+       </ClaimType> 
+      </ClaimsSchema>
+
+      <ClaimsTransformations>
+         <ClaimsTransformation Id="GetLocalizedStringForLogin" TransformationMethod="GetLocalizedStringsTransformation">
+            <OutputClaims>
+              <OutputClaim ClaimTypeReferenceId="login_forgot_text" TransformationClaimType="loginForgotText" />
+            </OutputClaims>
+          </ClaimsTransformation>
+      </ClaimsTransformations>
+
+  </BuildingBlocks>
+
+  <ClaimsProviders>
+    <ClaimsProvider>
+      <DisplayName>Local Account</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="SelfAsserted-UserSignin">
+            <DisplayName>Local Account Signin</DisplayName>
+            <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+            <Metadata>
+              <Item Key="setting.operatingMode">Email</Item>
+              <Item Key="ContentDefinitionReferenceId">api.usersignin</Item>
+              <Item Key="IncludeClaimResolvingInClaimsHandling">true</Item>
+              <Item Key="EnforceEmailVerification">false</Item>
+              <Item Key="setting.showCancelButton">false</Item>
+            </Metadata>
+            <IncludeInSso>false</IncludeInSso>
+            <InputClaimsTransformations>
+              <InputClaimsTransformation ReferenceId="GetLocalizedStringForLogin"/>
+            </InputClaimsTransformations>
+            <InputClaims>
+              <InputClaim ClaimTypeReferenceId="login_text"/>
+              <InputClaim ClaimTypeReferenceId="registration_link_text"/>
+              <InputClaim ClaimTypeReferenceId="signInName" />
+            </InputClaims>
+            <OutputClaims>
+              <OutputClaim ClaimTypeReferenceId="login_text"/>
+              <OutputClaim ClaimTypeReferenceId="signInName" Required="true" />
+              <OutputClaim ClaimTypeReferenceId="registration_link_text"/>
+              <OutputClaim ClaimTypeReferenceId="objectId" />
+              <OutputClaim ClaimTypeReferenceId="authenticationSource" />
+            </OutputClaims>
+            <ValidationTechnicalProfiles>
+              <ValidationTechnicalProfile ReferenceId="ANZ-AAD-UserReadUsingEmailAddress" />
+            </ValidationTechnicalProfiles>
+            <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
+        </TechnicalProfile>
+
+        <TechnicalProfile Id="UserSignup">
+          <DisplayName>Email signup</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="IpAddressClaimReferenceId">IpAddress</Item>
+            <Item Key="ContentDefinitionReferenceId">api.usersignup</Item>
+            <Item Key="setting.showCancelButton">false</Item>
+          </Metadata>
+          <!-- <CryptographicKeys>
+            <Key Id="issuer_secret" StorageReferenceId="B2C_1A_TokenSigningKeyContainer" />
+          </CryptographicKeys> -->
+          <InputClaimsTransformations>
+            <InputClaimsTransformation ReferenceId="GetLocalizedStringForMessage" />
+          </InputClaimsTransformations>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="signInName" />
+            <InputClaim ClaimTypeReferenceId="password_message" />
+            <InputClaim ClaimTypeReferenceId="signIn_message" />
+            <InputClaim ClaimTypeReferenceId="createAccount_message" />
+            <InputClaim ClaimTypeReferenceId="mobileVerification_message" />
+            <InputClaim ClaimTypeReferenceId="termsConsentLink_message" />
+            <InputClaim ClaimTypeReferenceId="myseed_role_text" />
+            <InputClaim ClaimTypeReferenceId="contact_customer_care_text" />
+            <InputClaim ClaimTypeReferenceId="termsConsentLink_message" />
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="signIn_message" />
+            <OutputClaim ClaimTypeReferenceId="createAccount_message" />
+            <OutputClaim ClaimTypeReferenceId="mobileVerification_message" />
+            <OutputClaim ClaimTypeReferenceId="givenName" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="surname" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="extension_business_name" />
+            <OutputClaim ClaimTypeReferenceId="extension_services" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="extension_roles" Required="true"/>
+            <OutputClaim ClaimTypeReferenceId="myseed_role_text" />
+            <OutputClaim ClaimTypeReferenceId="contact_customer_care_text" />
+            <OutputClaim ClaimTypeReferenceId="objectId" />
+            <OutputClaim ClaimTypeReferenceId="signInName" PartnerClaimType="signInNames.emailAddress" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="newPassword" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="password_message" />
+            <OutputClaim ClaimTypeReferenceId="reenterPassword" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="extension_marketingConsent" />
+            <OutputClaim ClaimTypeReferenceId="extension_TermsConsentStatus" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="termsConsentLink_message" />
+            <OutputClaim ClaimTypeReferenceId="executed-SelfAsserted-Input" DefaultValue="true" />
+            <OutputClaim ClaimTypeReferenceId="authenticationSource" />
+            <OutputClaim ClaimTypeReferenceId="newUser" />
+          </OutputClaims>
+          <ValidationTechnicalProfiles>
+            <ValidationTechnicalProfile ReferenceId="AAD-UserWriteUsingLogonEmail" />
+          </ValidationTechnicalProfiles>
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
+        </TechnicalProfile>
+
+        <TechnicalProfile Id="SelfAsserted-LoginEmailPassword-Signin">
+            <DisplayName>Local Account Signin</DisplayName>
+            <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+            <Metadata>
+              <Item Key="SignUpTarget">LocalAccountSignupExchange</Item>
+              <Item Key="setting.operatingMode">Email</Item>
+              <Item Key="ContentDefinitionReferenceId">api.usersignin</Item>
+              <Item Key="IncludeClaimResolvingInClaimsHandling">true</Item>
+            </Metadata>
+            <IncludeInSso>false</IncludeInSso>
+            <InputClaimsTransformations>
+              <InputClaimsTransformation ReferenceId="GetLocalizedStringForLogin"/>
+            </InputClaimsTransformations>
+            <InputClaims>
+              <InputClaim ClaimTypeReferenceId="signInName" />
+              <InputClaim ClaimTypeReferenceId="login_text"/>
+              <InputClaim ClaimTypeReferenceId="login_forgot_text"/>
+            </InputClaims>
+            <OutputClaims>
+              <OutputClaim ClaimTypeReferenceId="login_text"/>
+              <OutputClaim ClaimTypeReferenceId="signInName" Required="true" />
+              <OutputClaim ClaimTypeReferenceId="password" Required="true" />
+              <OutputClaim ClaimTypeReferenceId="login_forgot_text"/>
+              <OutputClaim ClaimTypeReferenceId="objectId" />
+              <OutputClaim ClaimTypeReferenceId="authenticationSource" />
+            </OutputClaims>
+            <ValidationTechnicalProfiles>
+              <ValidationTechnicalProfile ReferenceId="login-NonInteractive" />
+            </ValidationTechnicalProfiles>
+            <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
+        </TechnicalProfile>
+
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+    <ClaimsProvider>
+      <DisplayName>Azure Active Directory</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="ANZ-AAD-UserReadUsingEmailAddress">
+          <Metadata>
+            <Item Key="Operation">Read</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">false</Item>
+          </Metadata>
+          <IncludeInSso>false</IncludeInSso>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="signInName" PartnerClaimType="signInNames.emailAddress" Required="true" />
+          </InputClaims>
+          <OutputClaims>
+            <!-- Required claims -->
+            <OutputClaim ClaimTypeReferenceId="objectId" />
+            <OutputClaim ClaimTypeReferenceId="authenticationSource" DefaultValue="localAccountAuthentication" />
+
+            <!-- Optional claims -->
+            <OutputClaim ClaimTypeReferenceId="userPrincipalName" />
+            <OutputClaim ClaimTypeReferenceId="displayName" />
+            <OutputClaim ClaimTypeReferenceId="accountEnabled" />
+            <OutputClaim ClaimTypeReferenceId="otherMails" />
+            <OutputClaim ClaimTypeReferenceId="signInNames.emailAddress" />
+          </OutputClaims>
+          <IncludeTechnicalProfile ReferenceId="AAD-Common" />
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+  </ClaimsProviders>
+
+  <UserJourneys>
+    <UserJourney Id="UserSignin" >
+      <OrchestrationSteps>
+        <OrchestrationStep Order="1" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="LocalAccountSigninEmailExchange" TechnicalProfileReferenceId="SelfAsserted-UserSignin" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+        <OrchestrationStep Order="2" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="GetEmailExchange" TechnicalProfileReferenceId="ANZ-AAD-UserReadUsingEmailAddress" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+        <OrchestrationStep Order="3" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+              <Value>objectId</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="LocalAccountSignupEmailExchange" TechnicalProfileReferenceId="UserSignup" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+        <OrchestrationStep Order="4" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
+              <Value>objectId</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="LocalAccountUserSignInExchange" TechnicalProfileReferenceId="SelfAsserted-LoginEmailPassword-Signin" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+        <OrchestrationStep Order="5" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+      </OrchestrationSteps>
+    </UserJourney>
+  </UserJourneys>
+  <RelyingParty>
+    <DefaultUserJourney ReferenceId="UserSignin" />
+    <UserJourneyBehaviors>
+      <ScriptExecution>Allow</ScriptExecution>
+    </UserJourneyBehaviors>
+    <TechnicalProfile Id="PolicyProfile">
+      <DisplayName>PolicyProfile</DisplayName>
+      <Protocol Name="OpenIdConnect" />
+      <OutputClaims>
+        <OutputClaim ClaimTypeReferenceId="signInName" />
+        <OutputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="sub"/>
+        <OutputClaim ClaimTypeReferenceId="tenantId" AlwaysUseDefaultValue="true" DefaultValue="{Policy:TenantObjectId}" />
+        <OutputClaim ClaimTypeReferenceId="trustFrameworkPolicy" PartnerClaimType="tfp" Required="true" DefaultValue="{policy}" />
+      </OutputClaims>
+      <SubjectNamingInfo ClaimType="sub" />
+    </TechnicalProfile>
+  </RelyingParty>
+</TrustFrameworkPolicy>

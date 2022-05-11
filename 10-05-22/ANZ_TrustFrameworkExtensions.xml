@@ -1,5 +1,12 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<TrustFrameworkPolicy xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" PolicySchemaVersion="0.3.0.0" TenantId="contosob2c5.onmicrosoft.com" PolicyId="B2C_1A_ANZ_TrustFrameworkExtensions" PublicPolicyUri="http://contosob2c5.onmicrosoft.com/B2C_1A_ANZ_TrustFrameworkExtensions">
+<TrustFrameworkPolicy 
+   xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" 
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   PolicySchemaVersion="0.3.0.0" 
+   TenantId="contosob2c5.onmicrosoft.com" 
+   PolicyId="B2C_1A_ANZ_TrustFrameworkExtensions" 
+   PublicPolicyUri="http://contosob2c5.onmicrosoft.com/B2C_1A_ANZ_TrustFrameworkExtensions">
    <BasePolicy>
       <TenantId>contosob2c5.onmicrosoft.com</TenantId>
       <PolicyId>B2C_1A_PhoneNumberVerification</PolicyId>
@@ -138,6 +145,15 @@
             <Enumeration Text="contactCustomerCareText" Value="For agents, please contact Customer Service on 1800 558 399 to have one created." />
          </Restriction>
       </ClaimType>
+
+      <!-- Claims needed for local accounts. -->
+      <ClaimType Id="signInName">
+        <DisplayName>Sign in name</DisplayName>
+        <DataType>string</DataType>
+        <UserHelpText/>
+        <UserInputType>TextBox</UserInputType>
+      </ClaimType>
+
       </ClaimsSchema>
       <ClaimsTransformations>
          <ClaimsTransformation Id="GetLocalizedStringForMessage" TransformationMethod="GetLocalizedStringsTransformation">
@@ -165,6 +181,7 @@
             </OutputClaims>
           </ClaimsTransformation>
       </ClaimsTransformations>
+      
    </BuildingBlocks>
    <ClaimsProviders>
       <ClaimsProvider>
@@ -210,6 +227,7 @@
                <DisplayName>Local Account Signin</DisplayName>
                <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
                <Metadata>
+                  <Item Key="SignUpTarget">LocalAccountSignupExchange</Item>
                   <Item Key="setting.operatingMode">Email</Item>
                   <Item Key="ContentDefinitionReferenceId">api.usersignin</Item>
                   <Item Key="IncludeClaimResolvingInClaimsHandling">true</Item>
@@ -219,7 +237,7 @@
                   <InputClaimsTransformation ReferenceId="GetLocalizedStringForLogin"/>
                </InputClaimsTransformations>
                <InputClaims>
-                  <InputClaim ClaimTypeReferenceId="signInName" DefaultValue="{OIDC:LoginHint}" AlwaysUseDefaultValue="true" />
+                  <InputClaim ClaimTypeReferenceId="signInName" />
                   <InputClaim ClaimTypeReferenceId="login_text"/>
                   <InputClaim ClaimTypeReferenceId="registration_link_text"/>
                </InputClaims>
@@ -395,7 +413,7 @@
          </TechnicalProfiles>
        </ClaimsProvider>
    </ClaimsProviders>
-   <UserJourneys>
+   <!-- <UserJourneys>
       <UserJourney Id="UserSignin">
          <OrchestrationSteps>
             <OrchestrationStep Order="1" Type="ClaimsExchange">
@@ -406,5 +424,5 @@
             <OrchestrationStep Order="2" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
          </OrchestrationSteps>
       </UserJourney>
-   </UserJourneys>
+   </UserJourneys> -->
 </TrustFrameworkPolicy>

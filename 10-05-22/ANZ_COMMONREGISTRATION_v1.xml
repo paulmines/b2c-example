@@ -17,6 +17,7 @@
       <ContentDefinition Id="api.mobileverification">
         <LoadUri>~/tenant/templates/AzureBlue/selfAsserted.cshtml</LoadUri>
         <!-- <LoadUri>https://apacb2cextstorage.blob.core.windows.net/basf-dev/anz/html/anz-registration_step2.html</LoadUri> -->
+        <!-- <LoadUri>https://raw.githubusercontent.com/paulmines/b2c-example/main/en/anz-registration.html</LoadUri> -->
         <RecoveryUri>~/common/default_page_error.html</RecoveryUri>
         <DataUri>urn:com:microsoft:aad:b2c:elements:contract:selfasserted:2.1.10</DataUri>
         <Metadata>
@@ -26,11 +27,12 @@
           <LocalizedResourcesReference Language="en" LocalizedResourcesReferenceId="api.mobileverification.en" />
         </LocalizedResourcesReferences>
       </ContentDefinition>
+
     </ContentDefinitions>
   </BuildingBlocks>
   <ClaimsProviders>
     <ClaimsProvider>
-      <DisplayName>Local Account Signup</DisplayName>
+      <DisplayName>Local Account</DisplayName>
       <TechnicalProfiles>
         <TechnicalProfile Id="UserSignup">
           <DisplayName>Email signup</DisplayName>
@@ -40,9 +42,9 @@
             <Item Key="ContentDefinitionReferenceId">api.usersignup</Item>
             <Item Key="setting.showCancelButton">false</Item>
           </Metadata>
-          <CryptographicKeys>
+          <!-- <CryptographicKeys>
             <Key Id="issuer_secret" StorageReferenceId="B2C_1A_TokenSigningKeyContainer" />
-          </CryptographicKeys>
+          </CryptographicKeys> -->
           <InputClaimsTransformations>
             <InputClaimsTransformation ReferenceId="GetLocalizedStringForMessage" />
           </InputClaimsTransformations>
@@ -53,7 +55,7 @@
             <InputClaim ClaimTypeReferenceId="createAccount_message" />
             <InputClaim ClaimTypeReferenceId="mobileVerification_message" />
             <InputClaim ClaimTypeReferenceId="termsConsentLink_message" />
-            <InputClaim ClaimTypeReferenceId="my_seed_role_text" />
+            <InputClaim ClaimTypeReferenceId="myseed_role_text" />
             <InputClaim ClaimTypeReferenceId="contact_customer_care_text" />
             <InputClaim ClaimTypeReferenceId="termsConsentLink_message" />
           </InputClaims>
@@ -66,7 +68,7 @@
             <OutputClaim ClaimTypeReferenceId="extension_business_name" />
             <OutputClaim ClaimTypeReferenceId="extension_services" Required="true" />
             <OutputClaim ClaimTypeReferenceId="extension_roles" Required="true"/>
-            <OutputClaim ClaimTypeReferenceId="my_seed_role_text" />
+            <OutputClaim ClaimTypeReferenceId="myseed_role_text" />
             <OutputClaim ClaimTypeReferenceId="contact_customer_care_text" />
             <OutputClaim ClaimTypeReferenceId="objectId" />
             <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInNames.emailAddress" Required="true" />
@@ -85,6 +87,7 @@
           </ValidationTechnicalProfiles>
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
         </TechnicalProfile>
+
         <TechnicalProfile Id="MobileNumberVerification">
           <DisplayName>Phone</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
@@ -110,6 +113,7 @@
              <OutputClaim ClaimTypeReferenceId="mobile_number_verification_text" />
           </OutputClaims>
        </TechnicalProfile>
+
        <TechnicalProfile Id="UserCreationSucess">
         <DisplayName>Email signup</DisplayName>
         <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
@@ -128,38 +132,44 @@
         </OutputClaims>
         <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
       </TechnicalProfile>
+
       </TechnicalProfiles>
     </ClaimsProvider>
   </ClaimsProviders>
 <UserJourneys>
-  <UserJourney Id="UserSignup">
+  <UserJourney Id="UserSignup" >
     <OrchestrationSteps>
       <OrchestrationStep Order="1" Type="ClaimsExchange">
         <ClaimsExchanges>
-          <ClaimsExchange Id="LocalAccountSignupExchange" TechnicalProfileReferenceId="UserSignup" />
+          <ClaimsExchange Id="LocalAccountSigninEmailExchange" TechnicalProfileReferenceId="UserSignup" />
         </ClaimsExchanges>
       </OrchestrationStep>
       <OrchestrationStep Order="2" Type="ClaimsExchange">
         <ClaimsExchanges>
-          <ClaimsExchange Id="RetrieveCountryCodeExchange" TechnicalProfileReferenceId="RetrieveCountryCode" />
+          <ClaimsExchange Id="LocalAccountSignupExchange" TechnicalProfileReferenceId="UserSignup" />
         </ClaimsExchanges>
       </OrchestrationStep>
       <OrchestrationStep Order="3" Type="ClaimsExchange">
         <ClaimsExchanges>
-          <ClaimsExchange Id="MobileNumberExchange" TechnicalProfileReferenceId="MobileNumberVerification" />
+          <ClaimsExchange Id="RetrieveCountryCodeExchange" TechnicalProfileReferenceId="RetrieveCountryCode" />
         </ClaimsExchanges>
       </OrchestrationStep>
       <OrchestrationStep Order="4" Type="ClaimsExchange">
         <ClaimsExchanges>
-          <ClaimsExchange Id="UserCreationSucessExchange" TechnicalProfileReferenceId="UserCreationSucess" />
+          <ClaimsExchange Id="MobileNumberExchange" TechnicalProfileReferenceId="MobileNumberVerification" />
         </ClaimsExchanges>
       </OrchestrationStep>
       <OrchestrationStep Order="5" Type="ClaimsExchange">
         <ClaimsExchanges>
+          <ClaimsExchange Id="UserCreationSucessExchange" TechnicalProfileReferenceId="UserCreationSucess" />
+        </ClaimsExchanges>
+      </OrchestrationStep>
+      <OrchestrationStep Order="6" Type="ClaimsExchange">
+        <ClaimsExchanges>
           <ClaimsExchange Id="GetUserInfoExchange" TechnicalProfileReferenceId="GetUserInfoUsingObjectId" />
         </ClaimsExchanges>
       </OrchestrationStep>
-      <OrchestrationStep Order="6" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+      <OrchestrationStep Order="7" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
     </OrchestrationSteps>
   </UserJourney>
 </UserJourneys>

@@ -183,6 +183,31 @@
       </ContentDefinition>
       <!-- ANZ ContentDefinitions Ends -->
 
+      <ContentDefinition Id="api.useremailverify">
+        <LoadUri>~/tenant/templates/AzureBlue/selfAsserted.cshtml</LoadUri>
+        <!-- <LoadUri>https://apacb2cextstorage.blob.core.windows.net/basf-dev/anz/html/anz-registration.html</LoadUri> -->
+        <!-- <LoadUri>https://raw.githubusercontent.com/paulmines/b2c-example/main/en/anz-registration.html</LoadUri> -->
+        <RecoveryUri>~/common/default_page_error.html</RecoveryUri>
+        <DataUri>urn:com:microsoft:aad:b2c:elements:contract:selfasserted:2.1.10</DataUri>
+        <Metadata>
+          <Item Key="DisplayName">Collect information from user page</Item>
+        </Metadata>
+        <LocalizedResourcesReferences MergeBehavior="Prepend">
+          <LocalizedResourcesReference Language="en" LocalizedResourcesReferenceId="api.useremailverify.en" />
+          <!-- Add more languages here -->
+        </LocalizedResourcesReferences>
+      </ContentDefinition>
+
+      <ContentDefinition Id="api.selfasserted.newemailaddress">
+        <LoadUri>~/tenant/templates/AzureBlue/selfAsserted.cshtml</LoadUri>
+        <RecoveryUri>~/common/default_page_error.html</RecoveryUri>
+        <DataUri>urn:com:microsoft:aad:b2c:elements:contract:selfasserted:2.1.10</DataUri>
+        <LocalizedResourcesReferences MergeBehavior="Prepend">
+          <LocalizedResourcesReference Language="en" LocalizedResourcesReferenceId="api.selfasserted.newemailaddress.en" />
+          <!-- Add more languages here -->
+        </LocalizedResourcesReferences>
+      </ContentDefinition>
+
     </ContentDefinitions>
 
     <Localization Enabled="true">
@@ -373,6 +398,8 @@
           <LocalizedString ElementType="ClaimType" ElementId="givenName" StringId="UserHelpText">Your given name (also known as first name).</LocalizedString>
           <LocalizedString ElementType="UxElement" StringId="button_continue">Continue</LocalizedString>
           <LocalizedString ElementType="UxElement" StringId="button_cancel">Cancel</LocalizedString>
+          <LocalizedString ElementType="ErrorMessage" StringId="UserMessageIfClaimsPrincipalAlreadyExists">The New password is already exist.</LocalizedString>
+          <LocalizedString ElementType="ErrorMessage" StringId="UserMessageIfClaimsPrincipalDoesNotExist">We can't seem to find your account.</LocalizedString>
         </LocalizedStrings>
       </LocalizedResources>
 
@@ -583,7 +610,7 @@ Personal Information Collection Notice. &lt;More&gt;</LocalizedString>
           <LocalizedString ElementType="UxElement" StringId="heading">Access your profile</LocalizedString>
           <LocalizedString ElementType="GetLocalizedStringsTransformationClaimType" StringId="loginText">Signing into profile gives you access to tools, tips and information on our agricultural solutions.</LocalizedString>
           <LocalizedString ElementType="GetLocalizedStringsTransformationClaimType" StringId="registrationLinkText">Don't have an account? &lt;Register New Account&gt;</LocalizedString>
-          <LocalizedString ElementType="GetLocalizedStringsTransformationClaimType" StringId="loginForgotText">&lt;Forgot Password&gt;</LocalizedString>
+          <LocalizedString ElementType="GetLocalizedStringsTransformationClaimType" StringId="loginForgotText">Forgot Password</LocalizedString>
         </LocalizedStrings>
       </LocalizedResources>
       <!-- api.useersignin.es-->
@@ -607,7 +634,7 @@ Personal Information Collection Notice. &lt;More&gt;</LocalizedString>
           <LocalizedString ElementType="UxElement" StringId="heading">ES Access your profile</LocalizedString>
           <LocalizedString ElementType="GetLocalizedStringsTransformationClaimType" StringId="loginText">ES Signing into profile gives you access to tools, tips and information on our agricultural solutions.</LocalizedString>
           <LocalizedString ElementType="GetLocalizedStringsTransformationClaimType" StringId="registrationLinkText">ES Don't have an account? &lt;Register New Account&gt;</LocalizedString>
-          <LocalizedString ElementType="GetLocalizedStringsTransformationClaimType" StringId="loginForgotText">&lt;ES Forgot Password&gt;</LocalizedString>
+          <LocalizedString ElementType="GetLocalizedStringsTransformationClaimType" StringId="loginForgotText">ES Forgot Password</LocalizedString>
         </LocalizedStrings>
       </LocalizedResources>
       <!-- Add more languages here -->
@@ -846,7 +873,22 @@ Personal Information Collection Notice. &lt;More&gt;</LocalizedString>
         </LocalizedStrings>
       </LocalizedResources>
       <!-- ANZ Localized Resources Ends -->
+
+      <LocalizedResources Id="api.useremailverify.en">
+        <LocalizedStrings>
+          <LocalizedString ElementType="UxElement" StringId="heading">We noticed your account has not been verified.</LocalizedString>
+          <LocalizedString ElementType="GetLocalizedStringsTransformationClaimType" StringId="loginEmailverifyHead">You should have an email in your inbox from “ciam@basf.com[Email placeholder]“, prompting you to verify your account. Click the link provided to activate the account.</LocalizedString>
+          <LocalizedString ElementType="UxElement" StringId="button_continue">Resend Email</LocalizedString>
+        </LocalizedStrings>
+      </LocalizedResources>
+
+      <LocalizedResources Id="api.selfasserted.newemailaddress.en">
+        <LocalizedStrings>
+          <LocalizedString ElementType="ErrorMessage" StringId="UserMessageIfClaimsPrincipalDoesNotExist">We can't seem to find your new email address.</LocalizedString>
+        </LocalizedStrings>
+      </LocalizedResources>
     </Localization>
+
   </BuildingBlocks>
 
 </TrustFrameworkPolicy>

@@ -21,6 +21,28 @@
            <Enumeration Text="loginForgotText" Value="&lt;Forgot password?&gt;" />
          </Restriction>
        </ClaimType> 
+       <ClaimType Id="login_emailverify_head">
+         <DataType>string</DataType>
+         <UserInputType>Paragraph</UserInputType>
+         <Restriction>
+           <Enumeration Text="loginEmailverifyHead" Value="&lt;We noticed your account has not been verified.&gt;" />
+         </Restriction>
+       </ClaimType> 
+
+      <ClaimType Id="extension_isEmailVerified">
+        <DisplayName>Email Verification</DisplayName>
+        <DataType>string</DataType>
+        <UserHelpText>Is Email Verified</UserHelpText>
+        <UserInputType>TextBox</UserInputType>
+      </ClaimType>
+
+      <ClaimType Id="emailVerify">
+        <DisplayName>Email Address</DisplayName>
+        <DataType>string</DataType>
+        <UserHelpText>Email address to use for signing in.</UserHelpText>
+        <UserInputType>Readonly</UserInputType>
+      </ClaimType>
+
       </ClaimsSchema>
 
       <ClaimsTransformations>
@@ -29,6 +51,21 @@
               <OutputClaim ClaimTypeReferenceId="login_forgot_text" TransformationClaimType="loginForgotText" />
             </OutputClaims>
           </ClaimsTransformation>
+         <ClaimsTransformation Id="GetLocalizedStringForEmailVerify" TransformationMethod="GetLocalizedStringsTransformation">
+            <OutputClaims>
+              <OutputClaim ClaimTypeReferenceId="login_emailverify_head" TransformationClaimType="loginEmailverifyHead" />
+            </OutputClaims>
+          </ClaimsTransformation>
+
+          <ClaimsTransformation Id="CopyEmailAddress" TransformationMethod="CopyClaim">
+            <InputClaims>
+              <InputClaim ClaimTypeReferenceId="signInName" TransformationClaimType="inputClaim"/>
+            </InputClaims>
+            <OutputClaims>
+              <OutputClaim ClaimTypeReferenceId="emailVerify" TransformationClaimType="outputClaim"/>
+            </OutputClaims>
+          </ClaimsTransformation>
+
       </ClaimsTransformations>
 
   </BuildingBlocks>
@@ -62,6 +99,7 @@
               <OutputClaim ClaimTypeReferenceId="registration_link_text"/>
               <OutputClaim ClaimTypeReferenceId="objectId" />
               <OutputClaim ClaimTypeReferenceId="authenticationSource" />
+              <OutputClaim ClaimTypeReferenceId="extension_isEmailVerified" />
             </OutputClaims>
             <ValidationTechnicalProfiles>
               <ValidationTechnicalProfile ReferenceId="ANZ-AAD-UserReadUsingEmailAddress" />
@@ -135,15 +173,17 @@
             <IncludeInSso>false</IncludeInSso>
             <InputClaimsTransformations>
               <InputClaimsTransformation ReferenceId="GetLocalizedStringForLogin"/>
+              <InputClaimsTransformation ReferenceId="CopyEmailAddress"/>
             </InputClaimsTransformations>
             <InputClaims>
-              <InputClaim ClaimTypeReferenceId="signInName" />
+              <InputClaim ClaimTypeReferenceId="signInName"/>
               <InputClaim ClaimTypeReferenceId="login_text"/>
               <InputClaim ClaimTypeReferenceId="login_forgot_text"/>
+              <InputClaim ClaimTypeReferenceId="emailVerify"/>
             </InputClaims>
             <OutputClaims>
               <OutputClaim ClaimTypeReferenceId="login_text"/>
-              <OutputClaim ClaimTypeReferenceId="signInName" Required="true" />
+              <OutputClaim ClaimTypeReferenceId="emailVerify" Required="true"/>
               <OutputClaim ClaimTypeReferenceId="password" Required="true" />
               <OutputClaim ClaimTypeReferenceId="login_forgot_text"/>
               <OutputClaim ClaimTypeReferenceId="objectId" />
@@ -155,7 +195,44 @@
             <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
         </TechnicalProfile>
 
-      </TechnicalProfiles>
+        <TechnicalProfile Id="SelfAsserted-EmailVerify">
+            <DisplayName>Local Account Signin</DisplayName>
+            <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+            <Metadata>
+              <Item Key="ContentDefinitionReferenceId">api.useremailverify</Item>
+              <Item Key="IncludeClaimResolvingInClaimsHandling">true</Item>
+            </Metadata>
+            <IncludeInSso>false</IncludeInSso>
+            <InputClaimsTransformations>
+              <InputClaimsTransformation ReferenceId="GetLocalizedStringForEmailVerify"/>
+            </InputClaimsTransformations>
+            <InputClaims>
+              <InputClaim ClaimTypeReferenceId="login_emailverify_head"/>
+            </InputClaims>
+            <OutputClaims>
+              <OutputClaim ClaimTypeReferenceId="login_emailverify_head"/>
+            </OutputClaims>
+            <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
+        </TechnicalProfile>
+
+        <TechnicalProfile Id="SelfAsserted-Test">
+            <DisplayName>Local Account Signin</DisplayName>
+            <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+            <Metadata>
+              <Item Key="ContentDefinitionReferenceId">api.useremailverify</Item>
+              <Item Key="IncludeClaimResolvingInClaimsHandling">true</Item>
+            </Metadata>
+            <IncludeInSso>false</IncludeInSso>
+            <InputClaims>
+              <InputClaim ClaimTypeReferenceId="extension_isEmailVerified" />
+            </InputClaims>
+            <OutputClaims>
+              <OutputClaim ClaimTypeReferenceId="extension_isEmailVerified"/>
+            </OutputClaims>
+            <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
+        </TechnicalProfile>
+
+    </TechnicalProfiles>
     </ClaimsProvider>
 
     <ClaimsProvider>
@@ -181,12 +258,25 @@
             <OutputClaim ClaimTypeReferenceId="accountEnabled" />
             <OutputClaim ClaimTypeReferenceId="otherMails" />
             <OutputClaim ClaimTypeReferenceId="signInNames.emailAddress" />
+            <OutputClaim ClaimTypeReferenceId="extension_isEmailVerified" />
           </OutputClaims>
           <IncludeTechnicalProfile ReferenceId="AAD-Common" />
         </TechnicalProfile>
       </TechnicalProfiles>
     </ClaimsProvider>
   </ClaimsProviders>
+
+        <!-- <OrchestrationStep Order="2" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+              <Value>extension_isEmailVerified</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="SelfAssertedTestExchange" TechnicalProfileReferenceId="SelfAsserted-EmailVerify" />
+          </ClaimsExchanges>
+        </OrchestrationStep> -->
 
   <UserJourneys>
     <UserJourney Id="UserSignin" >
@@ -197,11 +287,6 @@
           </ClaimsExchanges>
         </OrchestrationStep>
         <OrchestrationStep Order="2" Type="ClaimsExchange">
-          <ClaimsExchanges>
-            <ClaimsExchange Id="GetEmailExchange" TechnicalProfileReferenceId="ANZ-AAD-UserReadUsingEmailAddress" />
-          </ClaimsExchanges>
-        </OrchestrationStep>
-        <OrchestrationStep Order="3" Type="ClaimsExchange">
           <Preconditions>
             <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
               <Value>objectId</Value>
@@ -209,10 +294,10 @@
             </Precondition>
           </Preconditions>
           <ClaimsExchanges>
-            <ClaimsExchange Id="LocalAccountSignupEmailExchange" TechnicalProfileReferenceId="UserSignup" />
+            <ClaimsExchange Id="UserSignupExchange" TechnicalProfileReferenceId="UserSignup" />
           </ClaimsExchanges>
         </OrchestrationStep>
-        <OrchestrationStep Order="4" Type="ClaimsExchange">
+        <OrchestrationStep Order="3" Type="ClaimsExchange">
           <Preconditions>
             <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
               <Value>objectId</Value>
@@ -220,10 +305,10 @@
             </Precondition>
           </Preconditions>
           <ClaimsExchanges>
-            <ClaimsExchange Id="LocalAccountUserSignInExchange" TechnicalProfileReferenceId="SelfAsserted-LoginEmailPassword-Signin" />
+            <ClaimsExchange Id="SelfAssertedEmailVerifyExchange" TechnicalProfileReferenceId="SelfAsserted-LoginEmailPassword-Signin" />
           </ClaimsExchanges>
         </OrchestrationStep>
-        <OrchestrationStep Order="5" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+        <OrchestrationStep Order="4" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
       </OrchestrationSteps>
     </UserJourney>
   </UserJourneys>

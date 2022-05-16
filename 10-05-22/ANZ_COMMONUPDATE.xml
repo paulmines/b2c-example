@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<TrustFrameworkPolicy
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06"
+  PolicySchemaVersion="0.3.0.0"
+  TenantId="contosob2c5.onmicrosoft.com"
+  PolicyId="B2C_1A_ANZ_COMMONUPDATE"
+  PublicPolicyUri="http://contosob2c5.onmicrosoft.com/B2C_1A_ANZ_COMMONUPDATE">
+
+  <BasePolicy>
+    <TenantId>contosob2c5.onmicrosoft.com</TenantId>
+    <PolicyId>B2C_1A_ANZ_TrustFrameworkExtensions</PolicyId>
+  </BasePolicy>
+
+<ClaimsProviders>
+    <ClaimsProvider>
+      <!-- The following Domain element allows this profile to be used if the request comes with domain_hint 
+           query string parameter, e.g. domain_hint=facebook.com  -->
+      <DisplayName>Local Account Update</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="SelfAsserted_ANZ_ProfileUpdate">
+          <DisplayName>User ID signup</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="ContentDefinitionReferenceId">api.selfasserted.profileupdate</Item>
+          </Metadata>
+          <IncludeInSso>false</IncludeInSso>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="alternativeSecurityId" />
+            <InputClaim ClaimTypeReferenceId="userPrincipalName" />
+
+            <!-- Optional claims. These claims are collected from the user and can be modified. Any claim added here should be updated in the
+                 ValidationTechnicalProfile referenced below so it can be written to directory after being updated by the user, i.e. AAD-UserWriteProfileUsingObjectId. -->
+            <InputClaim ClaimTypeReferenceId="givenName" />
+            <InputClaim ClaimTypeReferenceId="surname" />
+            <InputClaim ClaimTypeReferenceId="extension_isEmailVerified" />
+          </InputClaims>
+          <OutputClaims>
+            <!-- Required claims -->
+            <OutputClaim ClaimTypeReferenceId="executed-SelfAsserted-Input" DefaultValue="true" />
+
+            <!-- Optional claims. These claims are collected from the user and can be modified. Any claim added here should be updated in the
+                 ValidationTechnicalProfile referenced below so it can be written to directory after being updated by the user, i.e. AAD-UserWriteProfileUsingObjectId. -->
+            <OutputClaim ClaimTypeReferenceId="givenName" />
+            <OutputClaim ClaimTypeReferenceId="surname" />
+            <OutputClaim ClaimTypeReferenceId="extension_isEmailVerified" />
+          </OutputClaims>
+          <ValidationTechnicalProfiles>
+            <ValidationTechnicalProfile ReferenceId="AAD-UserWriteProfileUsingObjectId" />
+          </ValidationTechnicalProfiles>
+        </TechnicalProfile>
+        </TechnicalProfiles>
+    </ClaimsProvider>
+</ClaimsProviders>
+
+<UserJourneys>
+    <UserJourney Id="SelfAsserted-ProfileEdit">
+        <OrchestrationSteps>
+            <OrchestrationStep Order="1" Type="ClaimsProviderSelection" ContentDefinitionReferenceId="api.idpselections">
+                <ClaimsProviderSelections>
+                <ClaimsProviderSelection TargetClaimsExchangeId="LocalAccountSigninEmailExchange" />
+                </ClaimsProviderSelections>
+            </OrchestrationStep>
+            <OrchestrationStep Order="2" Type="ClaimsExchange">
+            <ClaimsExchanges>
+                <ClaimsExchange Id="LocalAccountSigninEmailExchange" TechnicalProfileReferenceId="UserSignin" />
+            </ClaimsExchanges>
+            </OrchestrationStep>
+            <OrchestrationStep Order="3" Type="ClaimsExchange">
+            <ClaimsExchanges>
+                <ClaimsExchange Id="LocalAccountProfileUpdateExchange" TechnicalProfileReferenceId="SelfAsserted_ANZ_ProfileUpdate" />
+            </ClaimsExchanges>
+            </OrchestrationStep>
+            <OrchestrationStep Order="4" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+        </OrchestrationSteps>
+        <ClientDefinition ReferenceId="DefaultWeb" />
+    </UserJourney>
+</UserJourneys>
+  <RelyingParty>
+    <DefaultUserJourney ReferenceId="SelfAsserted-ProfileEdit" />
+    <TechnicalProfile Id="PolicyProfile">
+      <DisplayName>PolicyProfile</DisplayName>
+      <Protocol Name="OpenIdConnect" />
+      <OutputClaims>
+        <OutputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="sub"/>
+        <OutputClaim ClaimTypeReferenceId="tenantId" AlwaysUseDefaultValue="true" DefaultValue="{Policy:TenantObjectId}" />
+      </OutputClaims>
+      <SubjectNamingInfo ClaimType="sub" />
+    </TechnicalProfile>
+  </RelyingParty>
+</TrustFrameworkPolicy>
+
+

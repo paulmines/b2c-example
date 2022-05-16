@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<TrustFrameworkPolicy
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06"
+  PolicySchemaVersion="0.3.0.0"
+  TenantId="contosob2c5.onmicrosoft.com"
+  PolicyId="B2C_1A_ANZ_COMMONEMAIL_UPDATE"
+  PublicPolicyUri="http://contosob2c5.onmicrosoft.com/B2C_1A_ANZ_COMMONEMAIL_UPDATE">
+
+  <BasePolicy>
+    <TenantId>contosob2c5.onmicrosoft.com</TenantId>
+    <PolicyId>B2C_1A_ANZ_TrustFrameworkExtensions</PolicyId>
+  </BasePolicy>
+
+<BuildingBlocks>
+    <ClaimsSchema>
+      <ClaimType Id="old.emailAddress">
+        <DisplayName>Old Email Address</DisplayName>
+        <DataType>string</DataType>
+        <UserHelpText>Email address to use for signing in.</UserHelpText>
+        <UserInputType>TextBox</UserInputType>
+        <PredicateValidationReference Id="IsEmailEmpty" />
+      </ClaimType>
+      <ClaimType Id="new.emailAddress">
+        <DisplayName>New Email Address</DisplayName>
+        <DataType>string</DataType>
+        <UserHelpText>Email address to use for signing in.</UserHelpText>
+        <UserInputType>TextBox</UserInputType>
+        <PredicateValidationReference Id="IsEmailEmpty" />
+      </ClaimType>
+      <ClaimType Id="testBox">
+        <DisplayName>Test Box</DisplayName>
+        <DataType>string</DataType>
+        <UserHelpText>Email address to use for signing in.</UserHelpText>
+        <UserInputType>TextBox</UserInputType>
+      </ClaimType>
+
+      <ClaimType Id="isNewEmailPresent">
+        <DisplayName>New Email Presented</DisplayName>
+        <DataType>boolean</DataType>
+      </ClaimType>
+
+      <ClaimType Id="empty">
+        <DisplayName>New Email Presented</DisplayName>
+        <DataType>string</DataType>
+      </ClaimType>
+    </ClaimsSchema>
+
+    <Predicates>
+      <Predicate Id="IsFirstNameLengthBetween1And64" Method="IsLengthRange" HelpText="Old Password cannot be empty.">
+        <Parameters>
+          <Parameter Id="Minimum">1</Parameter>
+          <Parameter Id="Maximum">100</Parameter>
+        </Parameters>
+      </Predicate>
+    </Predicates>
+
+    <PredicateValidations>
+      <PredicateValidation Id="IsEmailEmpty">
+        <PredicateGroups>
+          <PredicateGroup Id="LengthGroup">
+            <PredicateReferences>
+              <PredicateReference Id="IsFirstNameLengthBetween1And64" />
+            </PredicateReferences>
+          </PredicateGroup>
+        </PredicateGroups>
+      </PredicateValidation>
+    </PredicateValidations>
+
+    <ClaimsTransformations>
+        <ClaimsTransformation Id="CopyOldEmailAddress" TransformationMethod="CopyClaim">
+            <InputClaims>
+                <InputClaim ClaimTypeReferenceId="old.emailAddress" TransformationClaimType="inputClaim"/>
+            </InputClaims>
+            <OutputClaims>
+                <OutputClaim ClaimTypeReferenceId="email" TransformationClaimType="outputClaim"/>
+            </OutputClaims>
+        </ClaimsTransformation>
+
+        <ClaimsTransformation Id="CopyEmailFromNewEmailAddress" TransformationMethod="CopyClaim">
+            <InputClaims>
+                <InputClaim ClaimTypeReferenceId="new.emailAddress" TransformationClaimType="inputClaim"/>
+            </InputClaims>
+            <OutputClaims>
+                <OutputClaim ClaimTypeReferenceId="email" TransformationClaimType="outputClaim"/>
+            </OutputClaims>
+        </ClaimsTransformation>
+
+        <ClaimsTransformation Id="CopyTextBoxToTestBox" TransformationMethod="CopyClaim">
+            <InputClaims>
+                <InputClaim ClaimTypeReferenceId="objectId" TransformationClaimType="inputClaim"/>
+            </InputClaims>
+            <OutputClaims>
+                <OutputClaim ClaimTypeReferenceId="testBox" TransformationClaimType="outputClaim"/>
+            </OutputClaims>
+        </ClaimsTransformation>
+
+        <ClaimsTransformation Id="CopyEmptyToObjectId" TransformationMethod="CopyClaim">
+            <InputClaims>
+                <InputClaim ClaimTypeReferenceId="empty" TransformationClaimType="inputClaim"/>
+            </InputClaims>
+            <OutputClaims>
+                <OutputClaim ClaimTypeReferenceId="objectId" TransformationClaimType="outputClaim"/>
+            </OutputClaims>
+        </ClaimsTransformation>
+
+        <ClaimsTransformation Id="CheckIfNewEmailPresent" TransformationMethod="DoesClaimExist">
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="objectId" TransformationClaimType="inputClaim" />
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="isNewEmailPresent" TransformationClaimType="outputClaim" />
+          </OutputClaims>
+        </ClaimsTransformation>
+
+      <ClaimsTransformation Id="AssertNewEmailIsTrue" TransformationMethod="AssertBooleanClaimIsEqualToValue">
+        <InputClaims>
+          <InputClaim ClaimTypeReferenceId="isNewEmailPresent" TransformationClaimType="inputClaim" />
+        </InputClaims>
+        <InputParameters>
+          <InputParameter Id="valueToCompareTo" DataType="boolean" Value="true" />
+        </InputParameters>
+      </ClaimsTransformation>
+    </ClaimsTransformations>
+
+</BuildingBlocks>
+
+<ClaimsProviders>
+    <ClaimsProvider>
+      <!-- The following Domain element allows this profile to be used if the request comes with domain_hint 
+           query string parameter, e.g. domain_hint=facebook.com  -->
+      <DisplayName>Email Address Update</DisplayName>
+      <TechnicalProfiles>
+
+        <TechnicalProfile Id="SelfAsserted_Test">
+            <DisplayName>Email Uppdate</DisplayName>
+            <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+            <Metadata>
+                <Item Key="ContentDefinitionReferenceId">api.selfasserted.profileupdate</Item>
+            </Metadata>
+            <IncludeInSso>false</IncludeInSso>
+            <InputClaimsTransformations>
+                <InputClaimsTransformation ReferenceId="CopyTextBoxToTestBox" />
+            </InputClaimsTransformations>
+           <InputClaims>
+                <!-- <InputClaim ClaimTypeReferenceId="email" Required="true" /> -->
+                <InputClaim ClaimTypeReferenceId="testBox" Required="true" />
+            </InputClaims> 
+            <OutputClaims>
+                <OutputClaim ClaimTypeReferenceId="testBox" />
+                <OutputClaim ClaimTypeReferenceId="objectId" />
+            </OutputClaims>
+          <ValidationTechnicalProfiles>
+            <ValidationTechnicalProfile ReferenceId="AAD-UserReadUsingEmailAddress" />
+          </ValidationTechnicalProfiles>
+            <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
+        </TechnicalProfile>
+
+        <TechnicalProfile Id="SelfAsserted_ANZ_ProfileUpdate">
+          <DisplayName>Email Uppdate</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="ContentDefinitionReferenceId">api.selfasserted.profileupdate</Item>
+            <!-- <Item Key="UserMessageIfClaimsTransformationBooleanValueIsNotEqual">New email  is not founnd.</Item> -->
+          </Metadata>
+          <IncludeInSso>false</IncludeInSso>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="old.emailAddress" />
+            <InputClaim ClaimTypeReferenceId="new.emailAddress" />
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="old.emailAddress" />
+            <OutputClaim ClaimTypeReferenceId="new.emailAddress" />
+            <!-- <OutputClaim ClaimTypeReferenceId="objectId" /> -->
+          </OutputClaims>
+          <ValidationTechnicalProfiles>
+            <ValidationTechnicalProfile ReferenceId="AAD_OldEmailAddressReadOnly" />
+            <!-- <ValidationTechnicalProfile ReferenceId="AAD_NewEmailAddressReadOnly" /> -->
+          </ValidationTechnicalProfiles>
+            <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
+        </TechnicalProfile>
+
+        <TechnicalProfile Id="AAD-UserReadUsingEmailAddress">
+            <InputClaimsTransformations>
+                <InputClaimsTransformation ReferenceId="CopyOldEmailAddress" />
+            </InputClaimsTransformations>
+        </TechnicalProfile>
+
+        <TechnicalProfile Id="AAD_UserReadUsingNewEmailAddress">
+          <Metadata>
+            <Item Key="Operation">Read</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">true</Item>
+          </Metadata>
+          <IncludeInSso>false</IncludeInSso>
+            <!-- <InputClaimsTransformations>
+                <InputClaimsTransformation ReferenceId="CopyEmailFromNewEmailAddress" />
+            </InputClaimsTransformations> -->
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="new.emailAddress" PartnerClaimType="signInNames.emailAddress" Required="true" />
+          </InputClaims>
+          <OutputClaims>
+            <!-- Required claims -->
+            <OutputClaim ClaimTypeReferenceId="objectId" />
+            <OutputClaim ClaimTypeReferenceId="authenticationSource" DefaultValue="localAccountAuthentication" />
+
+            <OutputClaim ClaimTypeReferenceId="strongAuthenticationPhoneNumber" />
+
+            <!-- Optional claims -->
+            <OutputClaim ClaimTypeReferenceId="userPrincipalName" />
+            <OutputClaim ClaimTypeReferenceId="displayName" />
+          </OutputClaims>
+          <IncludeTechnicalProfile ReferenceId="AAD-Common" />
+        </TechnicalProfile>
+
+        <TechnicalProfile Id="AAD_WriteEmaillAddress">
+          <Metadata>
+            <Item Key="Operation">Write</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalAlreadyExists">false</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">true</Item>
+          </Metadata>
+          <IncludeInSso>false</IncludeInSso>
+            <InputClaimsTransformations>
+                <InputClaimsTransformation ReferenceId="CopyEmailFromNewEmailAddress" />
+            </InputClaimsTransformations>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="objectId" Required="true" />
+          </InputClaims>
+            <PersistedClaims>
+                <!-- Required claims -->
+                <PersistedClaim ClaimTypeReferenceId="objectId" />
+                <PersistedClaim ClaimTypeReferenceId="email" PartnerClaimType="signInNames.emailAddress" />
+            </PersistedClaims>
+          <IncludeTechnicalProfile ReferenceId="AAD-Common" />
+        </TechnicalProfile>
+
+        <TechnicalProfile Id="AAD_OldEmailAddressReadOnly">
+          <Metadata>
+            <Item Key="Operation">Read</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">true</Item>
+          </Metadata>
+          <IncludeInSso>false</IncludeInSso>
+            <InputClaimsTransformations>
+                <InputClaimsTransformation ReferenceId="CopyOldEmailAddress" />
+            </InputClaimsTransformations>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInNames.emailAddress" Required="true" />
+          </InputClaims>
+          <OutputClaims>
+            <!-- Required claims -->
+            <OutputClaim ClaimTypeReferenceId="objectId" />
+            <!-- <OutputClaim ClaimTypeReferenceId="authenticationSource" DefaultValue="localAccountAuthentication" /> -->
+
+            <!-- Optional claims -->
+            <!-- <OutputClaim ClaimTypeReferenceId="userPrincipalName" />
+            <OutputClaim ClaimTypeReferenceId="displayName" />
+            <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInNames.emailAddress" Required="true" /> -->
+          </OutputClaims>
+          <IncludeTechnicalProfile ReferenceId="AAD-Common" />
+        </TechnicalProfile>
+
+        <TechnicalProfile Id="AAD_NewEmailAddressReadOnly">
+          <Metadata>
+            <Item Key="Operation">Read</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">false</Item>
+          </Metadata>
+          <IncludeInSso>false</IncludeInSso>
+            <InputClaimsTransformations>
+                <InputClaimsTransformation ReferenceId="CopyEmailFromNewEmailAddress" />
+            </InputClaimsTransformations>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInNames.emailAddress" Required="true" />
+          </InputClaims>
+          <OutputClaims>
+            <!-- Required claims -->
+            <OutputClaim ClaimTypeReferenceId="objectId" />
+            <!-- <OutputClaim ClaimTypeReferenceId="authenticationSource" DefaultValue="localAccountAuthentication" /> -->
+
+            <!-- Optional claims -->
+            <!-- <OutputClaim ClaimTypeReferenceId="userPrincipalName" /> -->
+            <!-- <OutputClaim ClaimTypeReferenceId="displayName" /> -->
+            <!-- <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInNames.emailAddress" Required="true" /> -->
+          </OutputClaims>
+          <!-- <OutputClaimsTransformations>
+            <OutputClaimsTransformation ReferenceId="CheckIfNewEmailPresent" />
+          </OutputClaimsTransformations> -->
+          <IncludeTechnicalProfile ReferenceId="AAD-Common" />
+        </TechnicalProfile>
+
+        <TechnicalProfile Id="Example_AssertBoolean">
+          <DisplayName>Unit test</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.ClaimsTransformationProtocolProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="isNewEmailPresent"/>
+          </OutputClaims>
+          <OutputClaimsTransformations>
+            <OutputClaimsTransformation ReferenceId="AssertNewEmailIsTrue" />
+          </OutputClaimsTransformations>
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+        </TechnicalProfile>
+
+        </TechnicalProfiles>
+    </ClaimsProvider>
+</ClaimsProviders>
+
+<UserJourneys>
+    <UserJourney Id="SelfAsserted_ProfileEdit">
+        <OrchestrationSteps>
+            <OrchestrationStep Order="1" Type="ClaimsExchange">
+              <ClaimsExchanges>
+                  <ClaimsExchange Id="LocalAccountProfileUpdateExchange" TechnicalProfileReferenceId="SelfAsserted_ANZ_ProfileUpdate" />
+              </ClaimsExchanges>
+            </OrchestrationStep>
+            <OrchestrationStep Order="2" Type="ClaimsExchange">
+              <ClaimsExchanges>
+                  <ClaimsExchange Id="AAD_NewEmailAddressReadOnlyExchange" TechnicalProfileReferenceId="AAD_NewEmailAddressReadOnly" />
+              </ClaimsExchanges>
+            </OrchestrationStep>
+            <OrchestrationStep Order="3" Type="ClaimsExchange">
+              <ClaimsExchanges>
+                  <ClaimsExchange Id="SelfAsserted_TestExchange" TechnicalProfileReferenceId="SelfAsserted_Test" />
+              </ClaimsExchanges>
+            </OrchestrationStep>
+            <!-- <OrchestrationStep Order="3" Type="ClaimsExchange">
+              <ClaimsExchanges>
+                  <ClaimsExchange Id="AAD_WriteEmaillAddressExchange" TechnicalProfileReferenceId="AAD_WriteEmaillAddress" />
+              </ClaimsExchanges>
+            </OrchestrationStep> -->
+            <OrchestrationStep Order="4" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+        </OrchestrationSteps>
+        <ClientDefinition ReferenceId="DefaultWeb" />
+    </UserJourney>
+</UserJourneys>
+  <RelyingParty>
+    <DefaultUserJourney ReferenceId="SelfAsserted_ProfileEdit" />
+    <TechnicalProfile Id="PolicyProfile">
+      <DisplayName>PolicyProfile</DisplayName>
+      <Protocol Name="OpenIdConnect" />
+      <OutputClaims>
+        <OutputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="sub"/>
+        <OutputClaim ClaimTypeReferenceId="tenantId" AlwaysUseDefaultValue="true" DefaultValue="{Policy:TenantObjectId}" />
+      </OutputClaims>
+      <SubjectNamingInfo ClaimType="sub" />
+    </TechnicalProfile>
+  </RelyingParty>
+</TrustFrameworkPolicy>
+
+

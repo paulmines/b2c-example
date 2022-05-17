@@ -72,6 +72,7 @@
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <Metadata>
             <Item Key="ContentDefinitionReferenceId">api.selfasserted.admineditemailaddress</Item><!--should match tech profile naming / functionality (Done) -->
+            <Item Key="UserMessageIfClaimsTransformationStringsAreNotEqual">The email addresses you provided are not the same</Item>
           </Metadata>
           <IncludeInSso>false</IncludeInSso>
           <OutputClaims>
@@ -81,6 +82,7 @@
           </OutputClaims>
           <ValidationTechnicalProfiles>
             <ValidationTechnicalProfile ReferenceId="AAD_OldEmailAddressReadOnly" />
+            <ValidationTechnicalProfile ReferenceId="Validate_Email" />
           </ValidationTechnicalProfiles>
             <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" /> <!-- use SM-Noop-->
         </TechnicalProfile>
@@ -88,18 +90,16 @@
         <TechnicalProfile Id="AAD_WriteEmaillAddress">
           <Metadata>
             <Item Key="Operation">Write</Item>
-            <Item Key="RaiseErrorIfClaimsPrincipalAlreadyExists">true</Item><!-- reverse the true/false (Done) -->
-            <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">false</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalAlreadyExists">false</Item><!-- reverse the true/false (Done) -->
+            <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">true</Item>
           </Metadata>
           <IncludeInSso>false</IncludeInSso>
           <InputClaims>
             <InputClaim ClaimTypeReferenceId="objectId" Required="true" />
           </InputClaims>
             <PersistedClaims>
-                <!-- Required claims -->
                 <PersistedClaim ClaimTypeReferenceId="objectId" />
                 <PersistedClaim ClaimTypeReferenceId="newEmailAddress" PartnerClaimType="signInNames.emailAddress" /><!--new email claim could be used (Done) -->
-                <PersistedClaim ClaimTypeReferenceId="displayName" />
             </PersistedClaims>
           <IncludeTechnicalProfile ReferenceId="AAD-Common" />
         </TechnicalProfile>
@@ -127,26 +127,6 @@
           <OutputClaims>
             <OutputClaim ClaimTypeReferenceId="objectId" />
           </OutputClaims>
-        </TechnicalProfile>
-
-        <TechnicalProfile Id="SelfAsserted_Test">
-            <DisplayName>Email Uppdate</DisplayName>
-            <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-            <Metadata>
-                <Item Key="ContentDefinitionReferenceId">api.selfasserted.profileupdate</Item>
-            </Metadata>
-            <IncludeInSso>false</IncludeInSso>
-          <InputClaims>
-            <InputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="testBox" Required="true" />
-          </InputClaims>
-            <OutputClaims>
-                <OutputClaim ClaimTypeReferenceId="testBox" />
-                <OutputClaim ClaimTypeReferenceId="objectId" />
-            </OutputClaims>
-          <ValidationTechnicalProfiles>
-            <ValidationTechnicalProfile ReferenceId="AAD-UserReadUsingEmailAddress" />
-          </ValidationTechnicalProfiles>
-            <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
         </TechnicalProfile>
 
       </TechnicalProfiles>
@@ -184,17 +164,6 @@
                   <ClaimsExchange Id="AAD_WriteEmaillAddressExchange" TechnicalProfileReferenceId="AAD_WriteEmaillAddress" />
               </ClaimsExchanges>
             </OrchestrationStep>
-            <!-- <OrchestrationStep Order="4" Type="ClaimsExchange">
-              <Preconditions>
-                <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
-                  <Value>objectId</Value>
-                  <Action>SkipThisOrchestrationStep</Action>
-                </Precondition>
-              </Preconditions>
-              <ClaimsExchanges>
-                  <ClaimsExchange Id="SelfAsserted_TestExchange" TechnicalProfileReferenceId="SelfAsserted_Test" />
-              </ClaimsExchanges>
-            </OrchestrationStep> -->
             <OrchestrationStep Order="4" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
         </OrchestrationSteps>
         <ClientDefinition ReferenceId="DefaultWeb" />

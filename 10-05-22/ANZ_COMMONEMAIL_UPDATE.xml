@@ -35,6 +35,17 @@
         <UserInputType>TextBox</UserInputType>
       </ClaimType>
 
+
+      <ClaimType Id="accountEnabled">
+        <DisplayName>New Email Presented</DisplayName>
+        <DataType>boolean</DataType>
+      </ClaimType>
+
+      <ClaimType Id="ComparisonResult">
+        <DisplayName>New Email Presented</DisplayName>
+        <DataType>boolean</DataType>
+      </ClaimType>
+
     </ClaimsSchema>
 
     <ClaimsTransformations>
@@ -56,6 +67,34 @@
             </OutputClaims>
         </ClaimsTransformation>
 
+  <ClaimsTransformation Id="AssertEmailAreEqual" TransformationMethod="AssertStringClaimsAreEqual">
+    <InputClaims>
+      <InputClaim ClaimTypeReferenceId="newEmailAddress" TransformationClaimType="inputClaim1" />
+      <InputClaim ClaimTypeReferenceId="email" TransformationClaimType="inputClaim2" />
+    </InputClaims>
+    <InputParameters>
+      <InputParameter Id="stringComparison" DataType="string" Value="ordinalIgnoreCase" />
+    </InputParameters>
+  </ClaimsTransformation>
+
+<ClaimsTransformation Id="CheckIfEmailPresent" TransformationMethod="DoesClaimExist">
+  <InputClaims>
+    <InputClaim ClaimTypeReferenceId="signInNames.emailAddress" TransformationClaimType="inputClaim" />
+  </InputClaims>
+  <OutputClaims>
+    <OutputClaim ClaimTypeReferenceId="accountEnabled" TransformationClaimType="outputClaim" />
+  </OutputClaims>
+</ClaimsTransformation>
+
+<ClaimsTransformation Id="AssertAccountEnabledIsTrue" TransformationMethod="AssertBooleanClaimIsEqualToValue">
+  <InputClaims>
+    <InputClaim ClaimTypeReferenceId="accountEnabled" TransformationClaimType="inputClaim" />
+  </InputClaims>
+  <InputParameters>
+    <InputParameter Id="valueToCompareTo" DataType="boolean" Value="false" />
+  </InputParameters>
+</ClaimsTransformation>
+
     </ClaimsTransformations>
 
 </BuildingBlocks>
@@ -72,16 +111,20 @@
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <Metadata>
             <Item Key="ContentDefinitionReferenceId">api.selfasserted.admineditemailaddress</Item><!--should match tech profile naming / functionality (Done) -->
-            <Item Key="UserMessageIfClaimsTransformationStringsAreNotEqual">The email addresses you provided are not the same</Item>
+            <!-- <Item Key="UserMessageIfClaimsTransformationStringsAreNotEqual">The new email provided is exist</Item> -->
+            <Item Key="UserMessageIfClaimsTransformationBooleanValueIsNotEqual">The new email provided is exist.</Item>
           </Metadata>
           <IncludeInSso>false</IncludeInSso>
           <OutputClaims>
             <OutputClaim ClaimTypeReferenceId="oldEmailAddress" Required="true"/> <!-- Required attribute should be used (Done) -->
             <OutputClaim ClaimTypeReferenceId="newEmailAddress" Required="true"/><!-- Required attribute should be used (Done) -->
             <OutputClaim ClaimTypeReferenceId="objectId" />
+            <OutputClaim ClaimTypeReferenceId="accountEnabled" />
+            <OutputClaim ClaimTypeReferenceId="signInNames.emailAddress" />
           </OutputClaims>
           <ValidationTechnicalProfiles>
             <ValidationTechnicalProfile ReferenceId="AAD_OldEmailAddressReadOnly" />
+            <ValidationTechnicalProfile ReferenceId="AAD_NewEmailAddressReadOnly" />
             <ValidationTechnicalProfile ReferenceId="Validate_Email" />
           </ValidationTechnicalProfiles>
             <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" /> <!-- use SM-Noop-->
@@ -118,10 +161,66 @@
             <OutputClaim ClaimTypeReferenceId="objectId" />
             <OutputClaim ClaimTypeReferenceId="authenticationSource" DefaultValue="localAccountAuthentication" />
 
-            <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInNames.emailAddress" Required="true" />
+            <!-- <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInNames.emailAddress" Required="true" /> -->
           </OutputClaims>
           <IncludeTechnicalProfile ReferenceId="AAD-Common" />
         </TechnicalProfile>
+
+  <TechnicalProfile Id="SelfAsserted_Test">
+      <DisplayName>Email Uppdate</DisplayName>
+      <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+      <Metadata>
+          <Item Key="ContentDefinitionReferenceId">api.selfasserted.profileupdate</Item>
+      </Metadata>
+      <IncludeInSso>false</IncludeInSso>
+    <InputClaims>
+      <InputClaim ClaimTypeReferenceId="accountEnabled" PartnerClaimType="testBox" Required="true" />
+    </InputClaims> 
+      <OutputClaims>
+          <OutputClaim ClaimTypeReferenceId="testBox" />
+          <OutputClaim ClaimTypeReferenceId="objectId" />
+      </OutputClaims>
+    <ValidationTechnicalProfiles>
+      <ValidationTechnicalProfile ReferenceId="AAD-UserReadUsingEmailAddress" />
+    </ValidationTechnicalProfiles>
+      <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
+  </TechnicalProfile>
+
+  <TechnicalProfile Id="AAD_NewEmailAddressReadOnly">
+    <Metadata>
+      <Item Key="Operation">Read</Item>
+      <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">false</Item>
+    </Metadata>
+    <IncludeInSso>false</IncludeInSso>
+      <InputClaimsTransformations>
+          <InputClaimsTransformation ReferenceId="CopyEmailFromNewEmailAddress" />
+      </InputClaimsTransformations>
+    <InputClaims>
+      <InputClaim ClaimTypeReferenceId="newEmailAddress" PartnerClaimType="signInNames.emailAddress" Required="true" />
+    </InputClaims>
+    <OutputClaims>
+      <!-- Required claims -->
+      <OutputClaim ClaimTypeReferenceId="objectId" />
+      <OutputClaim ClaimTypeReferenceId="signInNames.emailAddress" Required="true" />
+    </OutputClaims>
+    <IncludeTechnicalProfile ReferenceId="AAD-Common" />
+  </TechnicalProfile>
+
+<TechnicalProfile Id="Validate_Email">
+  <DisplayName>Unlink Facebook</DisplayName>
+  <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.ClaimsTransformationProtocolProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+  <InputClaims>
+    <InputClaim ClaimTypeReferenceId="signInNames.emailAddress" />
+  </InputClaims>
+  <OutputClaims>
+    <OutputClaim ClaimTypeReferenceId="accountEnabled" DefaultValue="false"/>
+  </OutputClaims>
+  <OutputClaimsTransformations>
+    <OutputClaimsTransformation ReferenceId="CheckIfEmailPresent" />
+    <OutputClaimsTransformation ReferenceId="AssertAccountEnabledIsTrue" />
+  </OutputClaimsTransformations>
+  <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+</TechnicalProfile>
 
         <TechnicalProfile Id="AAD-UserReadUsingObjectId">
           <OutputClaims>
@@ -142,18 +241,18 @@
                   <ClaimsExchange Id="LocalAccountProfileUpdateExchange" TechnicalProfileReferenceId="AdminEditEmailAddress" />
               </ClaimsExchanges>
             </OrchestrationStep>
-            <OrchestrationStep Order="2" Type="ClaimsExchange">
-              <Preconditions>
+            <!-- <OrchestrationStep Order="2" Type="ClaimsExchange"> -->
+              <!-- <Preconditions>
                 <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
-                  <Value>objectId</Value>
+                  <Value>accountEnabled</Value>
                   <Action>SkipThisOrchestrationStep</Action>
                 </Precondition>
-              </Preconditions>
-              <ClaimsExchanges>
-                  <ClaimsExchange Id="AAD-UserReadUsingObjectIdExchange" TechnicalProfileReferenceId="AAD-UserReadUsingObjectId" />
+              </Preconditions> -->
+              <!-- <ClaimsExchanges>
+                  <ClaimsExchange Id="AAD_WriteEmaillAddressExchange" TechnicalProfileReferenceId="SelfAsserted_Test" />
               </ClaimsExchanges>
-            </OrchestrationStep>
-            <OrchestrationStep Order="3" Type="ClaimsExchange">
+            </OrchestrationStep> -->
+            <OrchestrationStep Order="2" Type="ClaimsExchange">
               <Preconditions>
                 <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
                   <Value>objectId</Value>
@@ -164,7 +263,7 @@
                   <ClaimsExchange Id="AAD_WriteEmaillAddressExchange" TechnicalProfileReferenceId="AAD_WriteEmaillAddress" />
               </ClaimsExchanges>
             </OrchestrationStep>
-            <OrchestrationStep Order="4" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+            <OrchestrationStep Order="3" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
         </OrchestrationSteps>
         <ClientDefinition ReferenceId="DefaultWeb" />
     </UserJourney>

@@ -90,7 +90,6 @@
           <OutputClaims>
             <OutputClaim ClaimTypeReferenceId="signIn_message" />
             <OutputClaim ClaimTypeReferenceId="createAccount_message" />
-            <OutputClaim ClaimTypeReferenceId="mobileVerification_message" />
             <OutputClaim ClaimTypeReferenceId="givenName" Required="true" />
             <OutputClaim ClaimTypeReferenceId="surname" Required="true" />
             <OutputClaim ClaimTypeReferenceId="postalCode"/>

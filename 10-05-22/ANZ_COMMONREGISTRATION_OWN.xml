@@ -30,9 +30,9 @@
           <Parameter Id="Maximum">40</Parameter>
         </Parameters>
       </Predicate>
-      <Predicate Id="PostalCodeNumber" Method="IncludesCharacters" HelpText="Postal Code should contain a digit">
+      <Predicate Id="PostalCodeNumber" Method="MatchesRegex" HelpText="Postal Code should contain a digit only.">
         <Parameters>
-          <Parameter Id="CharacterSet">0-9</Parameter>
+          <Parameter Id="RegularExpression">^[0-9]+$</Parameter>
         </Parameters>
       </Predicate>
     </Predicates>

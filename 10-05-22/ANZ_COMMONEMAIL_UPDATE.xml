@@ -46,6 +46,16 @@
         <DataType>boolean</DataType>
       </ClaimType>
 
+      <ClaimType Id="confirmation">
+        <DisplayName>Confirmation</DisplayName>
+        <DataType>string</DataType>
+        <UserInputType>RadioSingleSelect</UserInputType>
+        <Restriction>
+          <Enumeration Text="Yes" Value="Yes" SelectByDefault="false" />
+          <Enumeration Text="No " Value="No" SelectByDefault="false" />
+        </Restriction>
+      </ClaimType>
+
     </ClaimsSchema>
 
     <ClaimsTransformations>
@@ -124,9 +134,9 @@
           </OutputClaims>
           <ValidationTechnicalProfiles>
             <ValidationTechnicalProfile ReferenceId="AAD_OldEmailAddressReadOnly" />
-            <!-- <ValidationTechnicalProfile ReferenceId="AAD_NewEmailAddressReadOnly" />
-            <ValidationTechnicalProfile ReferenceId="Validate_Email" /> -->
-            <ValidationTechnicalProfile ReferenceId="AAD_WriteEmaillAddress_Test" />
+            <ValidationTechnicalProfile ReferenceId="AAD_NewEmailAddressReadOnly" />
+            <ValidationTechnicalProfile ReferenceId="Validate_Email" />
+            <!-- <ValidationTechnicalProfile ReferenceId="AAD_WriteEmaillAddress_Test" /> -->
           </ValidationTechnicalProfiles>
             <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" /> <!-- use SM-Noop-->
         </TechnicalProfile>
@@ -248,6 +258,18 @@
           </OutputClaims>
         </TechnicalProfile>
 
+        <TechnicalProfile Id="UpdateConfirmation">
+          <DisplayName>Email signup</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="ContentDefinitionReferenceId">api.usersignup</Item>
+            <Item Key="setting.showCancelButton">false</Item>
+          </Metadata>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="confirmation" />
+          </OutputClaims>
+        </TechnicalProfile>
+
       </TechnicalProfiles>
 
     </ClaimsProvider>
@@ -261,33 +283,41 @@
                   <ClaimsExchange Id="LocalAccountProfileUpdateExchange" TechnicalProfileReferenceId="AdminEditEmailAddress" />
               </ClaimsExchanges>
             </OrchestrationStep>
-            <!-- <OrchestrationStep Order="2" Type="ClaimsExchange"> -->
-              <!-- <Preconditions>
-                <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
-                  <Value>accountEnabled</Value>
-                  <Action>SkipThisOrchestrationStep</Action>
-                </Precondition>
-              </Preconditions> -->
-              <!-- <ClaimsExchanges>
-                  <ClaimsExchange Id="AAD_WriteEmaillAddressExchange" TechnicalProfileReferenceId="SelfAsserted_Test" />
-              </ClaimsExchanges>
-            </OrchestrationStep> -->
-            <!-- <OrchestrationStep Order="2" Type="ClaimsExchange">
-              <Preconditions>
-                <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
-                  <Value>objectId</Value>
-                  <Action>SkipThisOrchestrationStep</Action>
-                </Precondition>
-              </Preconditions>
-              <ClaimsExchanges>
-                  <ClaimsExchange Id="AAD_WriteEmaillAddressExchange" TechnicalProfileReferenceId="AAD_WriteEmaillAddress" />
-              </ClaimsExchanges>
-            </OrchestrationStep> -->
-            <OrchestrationStep Order="2" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+            <OrchestrationStep Order="2" Type="InvokeSubJourney">
+              <JourneyList>
+                <Candidate SubJourneyReferenceId="UpdateConfirmation_Evaluation" />
+              </JourneyList>
+            </OrchestrationStep>
+            <OrchestrationStep Order="3" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
         </OrchestrationSteps>
         <ClientDefinition ReferenceId="DefaultWeb" />
     </UserJourney>
 </UserJourneys>
+
+<SubJourneys>
+  <SubJourney Id="UpdateConfirmation_Evaluation" Type="Call">
+    <OrchestrationSteps>
+      <OrchestrationStep Order="1" Type="ClaimsExchange">
+       <ClaimsExchanges>
+        <ClaimsExchange Id="UpdateConfirmationEvaluation" TechnicalProfileReferenceId="UpdateConfirmation" />
+       </ClaimsExchanges>
+      </OrchestrationStep>
+      <OrchestrationStep Order="2" Type="ClaimsExchange">
+        <Preconditions>
+        <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
+          <Value>confirmation</Value>
+          <Value>No</Value>
+          <Action>SkipThisOrchestrationStep</Action>
+        </Precondition>
+        </Preconditions>
+        <ClaimsExchanges>
+            <ClaimsExchange Id="AAD_UserWriteUsingLogonEmailEvaluation" TechnicalProfileReferenceId="AAD_WriteEmaillAddress" />
+        </ClaimsExchanges>
+      </OrchestrationStep>
+    </OrchestrationSteps>
+  </SubJourney>
+</SubJourneys>
+
   <RelyingParty>
     <DefaultUserJourney ReferenceId="AdminChangeEmailAddress" /><!-- update the naming (Done) -->
     <UserJourneyBehaviors>

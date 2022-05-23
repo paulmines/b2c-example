@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+﻿<!-- <?xml version="1.0" encoding="UTF-8" standalone="yes"?> -->
 <TrustFrameworkPolicy
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -21,6 +21,24 @@
         <UserInputType>TextBox</UserInputType>
         <PredicateValidationReference Id="PostalCodeValidation" />
       </ClaimType>
+
+      <ClaimType Id="confirmation">
+        <DisplayName>Confirmation</DisplayName>
+        <DataType>string</DataType>
+        <UserInputType>RadioSingleSelect</UserInputType>
+        <Restriction>
+          <Enumeration Text="Yes" Value="Yes" SelectByDefault="false" />
+          <Enumeration Text="No " Value="No" SelectByDefault="false" />
+        </Restriction>
+      </ClaimType>
+
+      <ClaimType Id="testBox"><!--Remove all unused-->
+        <DisplayName>Test Box</DisplayName>
+        <DataType>string</DataType>
+        <UserHelpText>Email address to use for signing in.</UserHelpText>
+        <UserInputType>TextBox</UserInputType>
+      </ClaimType>
+
     </ClaimsSchema>
 
     <Predicates>
@@ -66,7 +84,7 @@
           <DisplayName>Email signup</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <Metadata>
-            <Item Key="IpAddressClaimReferenceId">IpAddress</Item>
+            <!-- <Item Key="IpAddressClaimReferenceId">IpAddress</Item> -->
             <Item Key="ContentDefinitionReferenceId">api.usersignup</Item>
             <Item Key="setting.showCancelButton">false</Item>
           </Metadata>
@@ -76,35 +94,26 @@
           <InputClaimsTransformations>
             <InputClaimsTransformation ReferenceId="GetLocalizedStringForMessage" />
           </InputClaimsTransformations>
-          <InputClaims>
-            <InputClaim ClaimTypeReferenceId="email" />
-            <InputClaim ClaimTypeReferenceId="password_message" />
-            <InputClaim ClaimTypeReferenceId="signIn_message" />
-            <InputClaim ClaimTypeReferenceId="createAccount_message" />
-            <InputClaim ClaimTypeReferenceId="mobileVerification_message" />
-            <InputClaim ClaimTypeReferenceId="termsConsentLink_message" />
-            <InputClaim ClaimTypeReferenceId="myseed_role_text" />
-            <InputClaim ClaimTypeReferenceId="contact_customer_care_text" />
-            <InputClaim ClaimTypeReferenceId="termsConsentLink_message" />
-          </InputClaims>
           <OutputClaims>
             <OutputClaim ClaimTypeReferenceId="signIn_message" />
             <OutputClaim ClaimTypeReferenceId="createAccount_message" />
             <OutputClaim ClaimTypeReferenceId="givenName" Required="true" />
             <OutputClaim ClaimTypeReferenceId="surname" Required="true" />
             <OutputClaim ClaimTypeReferenceId="postalCode"/>
-            <OutputClaim ClaimTypeReferenceId="objectId" />
+            <!-- <OutputClaim ClaimTypeReferenceId="objectId" /> -->
             <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInNames.emailAddress" Required="true" />
             <OutputClaim ClaimTypeReferenceId="newPassword" Required="true" />
             <OutputClaim ClaimTypeReferenceId="password_message" />
             <OutputClaim ClaimTypeReferenceId="reenterPassword" Required="true" />
-            <OutputClaim ClaimTypeReferenceId="authenticationSource" />
-            <OutputClaim ClaimTypeReferenceId="newUser" />
+            <!-- <OutputClaim ClaimTypeReferenceId="authenticationSource" /> -->
+            <!-- <OutputClaim ClaimTypeReferenceId="newUser" /> -->
           </OutputClaims>
-          <ValidationTechnicalProfiles>
+          <!-- <ValidationTechnicalProfiles>
+            <ValidationTechnicalProfile ReferenceId="AAD_ReadEmaillAdress" />
             <ValidationTechnicalProfile ReferenceId="AAD_UserWriteUsingLogonEmail" />
-          </ValidationTechnicalProfiles>
-          <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
+          </ValidationTechnicalProfiles> -->
+          <!-- <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" /> -->
+          <!-- <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" /> -->
         </TechnicalProfile>
 
         <TechnicalProfile Id="AAD_UserWriteUsingLogonEmail">
@@ -139,21 +148,108 @@
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
         </TechnicalProfile>
 
+        <TechnicalProfile Id="UpdateConfirmation">
+          <DisplayName>Email signup</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="ContentDefinitionReferenceId">api.usersignup</Item>
+            <Item Key="setting.showCancelButton">false</Item>
+          </Metadata>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="confirmation" />
+          </OutputClaims>
+        </TechnicalProfile>
+
+        <TechnicalProfile Id="AAD_ReadEmaillAdress">
+          <Metadata>
+            <Item Key="Operation">Read</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">false</Item>
+          </Metadata>
+          <IncludeInSso>false</IncludeInSso>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInNames.emailAddress" Required="true" />
+          </InputClaims>
+          <OutputClaims>
+            <!-- Required claims -->
+            <OutputClaim ClaimTypeReferenceId="objectId" />
+          </OutputClaims>
+          <IncludeTechnicalProfile ReferenceId="AAD-Common" />
+        </TechnicalProfile>
+
+  <TechnicalProfile Id="SelfAsserted_Test">
+      <DisplayName>Email Uppdate</DisplayName>
+      <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+      <Metadata>
+          <Item Key="ContentDefinitionReferenceId">api.selfasserted.profileupdate</Item>
+      </Metadata>
+      <IncludeInSso>false</IncludeInSso>
+    <InputClaims>
+      <InputClaim ClaimTypeReferenceId="confirmation" PartnerClaimType="testBox" Required="true" />
+    </InputClaims> 
+      <OutputClaims>
+          <OutputClaim ClaimTypeReferenceId="testBox" />
+      </OutputClaims>
+  </TechnicalProfile>
+
       </TechnicalProfiles>
     </ClaimsProvider>
   </ClaimsProviders>
+
 <UserJourneys>
   <UserJourney Id="UserSignup" >
     <OrchestrationSteps>
       <OrchestrationStep Order="1" Type="ClaimsExchange">
         <ClaimsExchanges>
-          <ClaimsExchange Id="LocalAccountSigninEmailExchange" TechnicalProfileReferenceId="UserSignup" />
+            <ClaimsExchange Id="UserSignupExchange" TechnicalProfileReferenceId="UserSignup" />
         </ClaimsExchanges>
       </OrchestrationStep>
-      <OrchestrationStep Order="2" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+      <OrchestrationStep Order="2" Type="InvokeSubJourney">
+        <JourneyList>
+          <Candidate SubJourneyReferenceId="UpdateConfirmation_Evaluation" />
+        </JourneyList>
+      </OrchestrationStep>
+      <OrchestrationStep Order="3" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
     </OrchestrationSteps>
   </UserJourney>
 </UserJourneys>
+
+<SubJourneys>
+  <SubJourney Id="UpdateConfirmation_Evaluation" Type="Call">
+    <OrchestrationSteps>
+      <OrchestrationStep Order="1" Type="ClaimsExchange">
+       <ClaimsExchanges>
+        <ClaimsExchange Id="UpdateConfirmationEvaluation" TechnicalProfileReferenceId="UpdateConfirmation" />
+       </ClaimsExchanges>
+      </OrchestrationStep>
+      <OrchestrationStep Order="2" Type="ClaimsExchange">
+        <Preconditions>
+          <!-- <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+            <Value>confirmation</Value>
+            <Action>SkipThisOrchestrationStep</Action>
+          </Precondition> -->
+        <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
+          <Value>confirmation</Value>
+          <Value>No</Value>
+          <Action>SkipThisOrchestrationStep</Action>
+        </Precondition>
+        </Preconditions>
+        <ClaimsExchanges>
+            <ClaimsExchange Id="AAD_UserWriteUsingLogonEmailExchange" TechnicalProfileReferenceId="AAD_UserWriteUsingLogonEmail" />
+        </ClaimsExchanges>
+      </OrchestrationStep>
+    </OrchestrationSteps>
+  </SubJourney>
+  <SubJourney Id="UserSignup_Evaluation" Type="Call">
+    <OrchestrationSteps>
+      <OrchestrationStep Order="1" Type="ClaimsExchange">
+       <ClaimsExchanges>
+        <ClaimsExchange Id="UserSignupEvaluation" TechnicalProfileReferenceId="UserSignup" />
+       </ClaimsExchanges>
+      </OrchestrationStep>
+    </OrchestrationSteps>
+  </SubJourney>
+</SubJourneys>
+
   <RelyingParty>
     <DefaultUserJourney ReferenceId="UserSignup" />
     <UserJourneyBehaviors>
@@ -165,7 +261,7 @@
       <OutputClaims>
         <OutputClaim ClaimTypeReferenceId="givenName" PartnerClaimType="firstName"/>
         <OutputClaim ClaimTypeReferenceId="surname" PartnerClaimType="lastName"/>
-        <OutputClaim ClaimTypeReferenceId="email" />
+        <!-- <OutputClaim ClaimTypeReferenceId="email" /> -->
         <OutputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="sub"/>
         <OutputClaim ClaimTypeReferenceId="tenantId" AlwaysUseDefaultValue="true" DefaultValue="{Policy:TenantObjectId}" />
         <OutputClaim ClaimTypeReferenceId="trustFrameworkPolicy" PartnerClaimType="tfp" Required="true" DefaultValue="{policy}" />

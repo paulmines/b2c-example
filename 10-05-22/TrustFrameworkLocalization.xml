@@ -210,10 +210,12 @@
 
       <ContentDefinition Id="api.selfasserted.admineditemailaddress">
         <LoadUri>~/tenant/templates/AzureBlue/selfAsserted.cshtml</LoadUri>
+        <!-- <LoadUri>https://raw.githubusercontent.com/paulmines/b2c-example/main/{Culture:LanguageName}/testClassic.html</LoadUri> -->
         <RecoveryUri>~/common/default_page_error.html</RecoveryUri>
         <DataUri>urn:com:microsoft:aad:b2c:elements:contract:selfasserted:2.1.10</DataUri>
         <LocalizedResourcesReferences MergeBehavior="Prepend">
           <LocalizedResourcesReference Language="en" LocalizedResourcesReferenceId="api.selfasserted.admineditemailaddress.en" />
+          <LocalizedResourcesReference Language="es" LocalizedResourcesReferenceId="api.selfasserted.admineditemailaddress.es" />
           <!-- Add more languages here -->
         </LocalizedResourcesReferences>
       </ContentDefinition>
@@ -913,6 +915,23 @@ Personal Information Collection Notice. &lt;More&gt;</LocalizedString>
           <LocalizedString ElementType="ErrorMessage" StringId="UserMessageIfClaimsPrincipalDoesNotExist">We can't seem to find your account.</LocalizedString>
         </LocalizedStrings>
       </LocalizedResources>
+
+      <!-- Edit profile page Spanish-->
+      <LocalizedResources Id="api.selfasserted.admineditemailaddress.es">
+        <LocalizedStrings>
+          <LocalizedString ElementType="ClaimType" ElementId="displayName" StringId="DisplayName">ES Display Name</LocalizedString>
+          <LocalizedString ElementType="ClaimType" ElementId="displayName" StringId="UserHelpText">ES Your display name.</LocalizedString>
+          <LocalizedString ElementType="ClaimType" ElementId="surname" StringId="DisplayName">ES Surname</LocalizedString>
+          <LocalizedString ElementType="ClaimType" ElementId="surname" StringId="UserHelpText">ES Your surname (also known as family name or last name).</LocalizedString>
+          <LocalizedString ElementType="ClaimType" ElementId="givenName" StringId="DisplayName">ES Given Name</LocalizedString>
+          <LocalizedString ElementType="ClaimType" ElementId="givenName" StringId="UserHelpText">ES Your given name (also known as first name).</LocalizedString>
+          <LocalizedString ElementType="UxElement" StringId="button_continue">ES Continue</LocalizedString>
+          <LocalizedString ElementType="UxElement" StringId="button_cancel">ES Cancel</LocalizedString>
+          <LocalizedString ElementType="ErrorMessage" StringId="UserMessageIfClaimsPrincipalAlreadyExists">ES The New password is already exist.</LocalizedString>
+          <LocalizedString ElementType="ErrorMessage" StringId="UserMessageIfClaimsPrincipalDoesNotExist">ES We can't seem to find your account.</LocalizedString>
+        </LocalizedStrings>
+      </LocalizedResources>
+
 
     </Localization>
 

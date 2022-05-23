@@ -114,6 +114,7 @@
           <Metadata>
             <Item Key="ContentDefinitionReferenceId">api.selfasserted.admineditemailaddress</Item><!--should match tech profile naming / functionality (Done) -->
             <Item Key="UserMessageIfClaimsTransformationBooleanValueIsNotEqual">The new email provided is exist.</Item>
+            <Item Key="setting.showCancelButton">false</Item>
           </Metadata>
           <IncludeInSso>false</IncludeInSso>
           <OutputClaims>

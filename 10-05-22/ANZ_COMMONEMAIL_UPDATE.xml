@@ -28,14 +28,6 @@
         <UserInputType>TextBox</UserInputType>
       </ClaimType>
 
-      <ClaimType Id="testBox"><!--Remove all unused-->
-        <DisplayName>Test Box</DisplayName>
-        <DataType>string</DataType>
-        <UserHelpText>Email address to use for signing in.</UserHelpText>
-        <UserInputType>TextBox</UserInputType>
-      </ClaimType>
-
-
       <ClaimType Id="accountEnabled">
         <DisplayName>New Email Presented</DisplayName>
         <DataType>boolean</DataType>
@@ -121,7 +113,6 @@
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <Metadata>
             <Item Key="ContentDefinitionReferenceId">api.selfasserted.admineditemailaddress</Item><!--should match tech profile naming / functionality (Done) -->
-            <!-- <Item Key="UserMessageIfClaimsTransformationStringsAreNotEqual">The new email provided is exist</Item> -->
             <Item Key="UserMessageIfClaimsTransformationBooleanValueIsNotEqual">The new email provided is exist.</Item>
           </Metadata>
           <IncludeInSso>false</IncludeInSso>
@@ -129,14 +120,11 @@
             <OutputClaim ClaimTypeReferenceId="oldEmailAddress" Required="true"/> <!-- Required attribute should be used (Done) -->
             <OutputClaim ClaimTypeReferenceId="newEmailAddress" Required="true"/><!-- Required attribute should be used (Done) -->
             <OutputClaim ClaimTypeReferenceId="objectId" />
-            <!-- <OutputClaim ClaimTypeReferenceId="accountEnabled" /> -->
-            <!-- <OutputClaim ClaimTypeReferenceId="signInNames.emailAddress" /> -->
           </OutputClaims>
           <ValidationTechnicalProfiles>
             <ValidationTechnicalProfile ReferenceId="AAD_OldEmailAddressReadOnly" />
             <ValidationTechnicalProfile ReferenceId="AAD_NewEmailAddressReadOnly" />
             <ValidationTechnicalProfile ReferenceId="Validate_Email" />
-            <!-- <ValidationTechnicalProfile ReferenceId="AAD_WriteEmaillAddress_Test" /> -->
           </ValidationTechnicalProfiles>
             <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" /> <!-- use SM-Noop-->
         </TechnicalProfile>
@@ -172,49 +160,9 @@
             <OutputClaim ClaimTypeReferenceId="objectId" />
             <OutputClaim ClaimTypeReferenceId="authenticationSource" DefaultValue="localAccountAuthentication" />
 
-            <!-- <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInNames.emailAddress" Required="true" /> -->
           </OutputClaims>
           <IncludeTechnicalProfile ReferenceId="AAD-Common" />
         </TechnicalProfile>
-
-  <TechnicalProfile Id="AAD_WriteEmaillAddress_Test">
-    <Metadata>
-      <Item Key="Operation">Write</Item>
-      <Item Key="RaiseErrorIfClaimsPrincipalAlreadyExists">true</Item>
-      <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">false</Item>
-    </Metadata>
-    <IncludeInSso>false</IncludeInSso>
-    <InputClaims>
-      <InputClaim ClaimTypeReferenceId="objectId" Required="true" />
-      <!-- <InputClaim ClaimTypeReferenceId="newEmailAddress" PartnerClaimType="signInNames.emailAddress" Required="true" /> -->
-    </InputClaims>
-      <PersistedClaims>
-          <PersistedClaim ClaimTypeReferenceId="objectId" />
-          <PersistedClaim ClaimTypeReferenceId="newEmailAddress" PartnerClaimType="signInNames.emailAddress" />
-          <!-- <PersistedClaim ClaimTypeReferenceId="displayName" /> -->
-      </PersistedClaims>
-    <IncludeTechnicalProfile ReferenceId="AAD-Common" />
-  </TechnicalProfile>
-
-  <TechnicalProfile Id="SelfAsserted_Test">
-      <DisplayName>Email Uppdate</DisplayName>
-      <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-      <Metadata>
-          <Item Key="ContentDefinitionReferenceId">api.selfasserted.profileupdate</Item>
-      </Metadata>
-      <IncludeInSso>false</IncludeInSso>
-    <InputClaims>
-      <InputClaim ClaimTypeReferenceId="accountEnabled" PartnerClaimType="testBox" Required="true" />
-    </InputClaims> 
-      <OutputClaims>
-          <OutputClaim ClaimTypeReferenceId="testBox" />
-          <OutputClaim ClaimTypeReferenceId="objectId" />
-      </OutputClaims>
-    <ValidationTechnicalProfiles>
-      <ValidationTechnicalProfile ReferenceId="AAD-UserReadUsingEmailAddress" />
-    </ValidationTechnicalProfiles>
-      <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
-  </TechnicalProfile>
 
   <TechnicalProfile Id="AAD_NewEmailAddressReadOnly">
     <Metadata>

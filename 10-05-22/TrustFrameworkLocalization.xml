@@ -209,8 +209,9 @@
       </ContentDefinition>
 
       <ContentDefinition Id="api.selfasserted.admineditemailaddress">
-        <LoadUri>~/tenant/templates/AzureBlue/selfAsserted.cshtml</LoadUri>
+        <!-- <LoadUri>~/tenant/templates/AzureBlue/selfAsserted.cshtml</LoadUri> -->
         <!-- <LoadUri>https://raw.githubusercontent.com/paulmines/b2c-example/main/{Culture:LanguageName}/testClassic.html</LoadUri> -->
+        <LoadUri>https://raw.githubusercontent.com/paulmines/b2c-example/main/{Culture:LanguageName}/AzureBlue/selfAsserted.html</LoadUri>
         <RecoveryUri>~/common/default_page_error.html</RecoveryUri>
         <DataUri>urn:com:microsoft:aad:b2c:elements:contract:selfasserted:2.1.10</DataUri>
         <LocalizedResourcesReferences MergeBehavior="Prepend">

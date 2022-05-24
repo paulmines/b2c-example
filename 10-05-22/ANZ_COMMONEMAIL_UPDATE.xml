@@ -48,6 +48,14 @@
         </Restriction>
       </ClaimType>
 
+
+      <ClaimType Id="testBox"><!--Remove all unused-->
+        <DisplayName>Test Box</DisplayName>
+        <DataType>string</DataType>
+        <UserHelpText>Email address to use for signing in.</UserHelpText>
+        <UserInputType>TextBox</UserInputType>
+      </ClaimType>
+
     </ClaimsSchema>
 
     <ClaimsTransformations>
@@ -219,6 +227,22 @@
           </OutputClaims>
         </TechnicalProfile>
 
+  <TechnicalProfile Id="SelfAsserted_Test">
+      <DisplayName>Email Uppdate</DisplayName>
+      <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+      <Metadata>
+          <Item Key="ContentDefinitionReferenceId">api.selfasserted.profileupdate</Item>
+          <Item Key="IncludeClaimResolvingInClaimsHandling">true</Item>
+      </Metadata>
+      <IncludeInSso>false</IncludeInSso>
+    <InputClaims>
+      <InputClaim ClaimTypeReferenceId="testBox" AlwaysUseDefaultValue="true" DefaultValue="{OAUTH-KV:bgColor}" />
+    </InputClaims> 
+      <OutputClaims>
+          <OutputClaim ClaimTypeReferenceId="testBox" />
+      </OutputClaims>
+  </TechnicalProfile>
+
       </TechnicalProfiles>
 
     </ClaimsProvider>
@@ -270,6 +294,9 @@
   <RelyingParty>
     <DefaultUserJourney ReferenceId="AdminChangeEmailAddress" /><!-- update the naming (Done) -->
     <UserJourneyBehaviors>
+      <ContentDefinitionParameters>
+        <Parameter Name="bgColor">{OAUTH-KV:bgColor}</Parameter>
+      </ContentDefinitionParameters>
       <ScriptExecution>Allow</ScriptExecution>
     </UserJourneyBehaviors>
     <TechnicalProfile Id="AdminChangeEmailAddress"><!-- allow javascript always (Done) -->

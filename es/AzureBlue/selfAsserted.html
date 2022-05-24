@@ -124,8 +124,8 @@
 
 </head>
 <body>
-    <div id="background_branding_container" data-tenant-branding-background-color="true">
-      <img data-tenant-branding-background="false" src="https://login.microsoftonline.com/static/tenant/default/img/default_signin_illustration_optimized.png" alt="Illustration" aria-hidden="true"/>
+    <div id="background_branding_container" data-tenant-branding-background-color="false">
+      <!-- <img data-tenant-branding-background="false" src="https://login.microsoftonline.com/templates/src/backgrounds/1-1.png" alt="Illustration" aria-hidden="true"/> -->
     </div>
     <div class="container  self_asserted_container " role="presentation">
         <div class="row">
@@ -142,3 +142,14 @@
     </div>
 </body>
 </html>
+
+<script>
+  const params = new Proxy(new URLSearchParams(window.location.search), {
+    get: (searchParams, prop) => searchParams.get(prop),
+  });
+  // Get the value of "some_key" in eg "https://example.com/?some_key=some_value"
+  let value = params.bgColor; // "some_value"  
+  console.log('bgColor1:', value)
+  document.body.style.backgroundColor = value;
+  
+  </script>

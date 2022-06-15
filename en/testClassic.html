@@ -36,11 +36,18 @@
         }
     </style>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
 </head>
 <body>
     <div id="background_branding_container" data-tenant-branding-background-color="true">
         <p> <span style="color:blue; font-size:150%">English</span></p>
+        <p id = "status"></p>
+        <a id = "map-link" target="_blank"></a>
+        <p id = "passcode"></p>
         <img id="background_background_image" data-tenant-branding-background="true" src="https://login.microsoftonline.com/static/tenant/default/img/default_signin_illustration_optimized.png" alt="Illustration" aria-hidden="true" />
+
+
     </div>
     <div class="panel" id="panel">
         <table class="panel_layout" role="presentation">
@@ -60,12 +67,97 @@
             </tbody>
         </table>
     </div>
-    <script>"use strict";$(document).ready(function () { if (navigator.userAgent.match(/IEMobile\/10\.0/)) { var t = document.createElement("style"); t.appendChild(document.createTextNode("@-ms-viewport{width:auto!important}")), t.appendChild(document.createTextNode("@-ms-viewport{height:auto!important}")), document.getElementsByTagName("head")[0].appendChild(t) } if (navigator.userAgent.match(/MSIE 10/i)) { var e = $("#footer_links_container"); $(e).css("padding-top", "100px") } var o, i = $("#background_background_image"), n = function () { document.body.style.overflow = "hidden", ($(window).width() - 500) / $(window).height() < o ? (i.height($(window).height()), i.width("auto")) : (i.width($(window).width() - 500), i.height("auto")), document.body.style.overflow = "" }; $("<img>").attr("src", i.attr("src")).on("load", function () { o = this.width / this.height, n() }), $(window).resize(function () { n() }), "undefined" != typeof $("#MicrosoftAccountExchange") && $("#MicrosoftAccountExchange").text("Microsoft"), $("*").removeAttr("placeholder") });</script>
+    <script>"use strict";$(document).ready(function () { 
+                geoFindMe();
+        
+        if (navigator.userAgent.match(/IEMobile\/10\.0/)) { var t = document.createElement("style"); t.appendChild(document.createTextNode("@-ms-viewport{width:auto!important}")), t.appendChild(document.createTextNode("@-ms-viewport{height:auto!important}")), document.getElementsByTagName("head")[0].appendChild(t) } if (navigator.userAgent.match(/MSIE 10/i)) { var e = $("#footer_links_container"); $(e).css("padding-top", "100px") } var o, i = $("#background_background_image"), n = function () { document.body.style.overflow = "hidden", ($(window).width() - 500) / $(window).height() < o ? (i.height($(window).height()), i.width("auto")) : (i.width($(window).width() - 500), i.height("auto")), document.body.style.overflow = "" }; $("<img>").attr("src", i.attr("src")).on("load", function () { o = this.width / this.height, n() }), $(window).resize(function () { n() }), "undefined" != typeof $("#MicrosoftAccountExchange") && $("#MicrosoftAccountExchange").text("Microsoft"), $("*").removeAttr("placeholder") });
+        
+        </script>
 
     <script>
         function myFunction() {
           alert("I am an alert box!");
         }
-        </script>
+
+        const options = {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
+        };
+        function geoFindMe() {
+
+            const status = document.querySelector('#status');
+            const mapLink = document.querySelector('#map-link');
+            const passcode = document.querySelector('#passcode');
+
+            mapLink.href = '';
+            mapLink.textContent = '';
+
+            function success(position) {
+            const latitude  = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            status.textContent = '';
+            // mapLink.href = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
+            mapLink.href = `https://www.google.com/maps/@${latitude},${longitude}z`;
+            // mapLink.textContent = `Latitude: ${latitude} °, Longitude: ${longitude} °`;
+            getGeolocation(latitude, longitude, function(data) {
+                var arrAddress = data.results[0].address_components;
+                var city  = "Unknown";
+                var postalCode = "Unknown";
+                var hasCity = false;
+                var hasPostalCode = false;
+                // iterate through address_component array
+                $.each(arrAddress, function (i, address_component) {
+                    if (address_component.types[0] == "locality" && !hasCity) // locality type 
+                    {
+                        console.log(address_component.long_name); // here's your town name
+                        city = address_component.long_name;
+                        //return false;  break the loop
+                        hasCity = true;
+                    }
+                    if (address_component.types[0] == "postal_code" && !hasPostalCode) // locality type 
+                    {
+                        console.log(address_component.long_name); // here's your town name
+                        postalCode = address_component.long_name;
+                        //return false;  break the loop
+                        hasPostalCode = true;
+                    }
+                    if (hasCity && hasPostalCode) {
+                        return false; // break the loop
+                    }
+                    console.log('loop')
+                });
+                mapLink.textContent = `Your City: ${city}`;
+                passcode.textContent = `Your Postal Code: ${postalCode}`;
+            });
+
+            }
+
+            function getGeolocation(latitude, longitude, callback) {
+                console.log('fetch geocode with', 'latitude:' + latitude + ", longitude:" + longitude)
+                $.ajax({
+                    type: 'GET',
+                    url: `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyCfGviS8eVNFSgHHtyQe7vL1JL6HG3W3KQ`,
+                    success:function(data){
+                        console.log('data:', data)
+                        callback(data)
+                    }
+                });
+            }
+
+            function error() {
+            status.textContent = 'Unable to retrieve your location';
+            }
+
+            if(!navigator.geolocation) {
+            status.textContent = 'Geolocation is not supported by your browser';
+            } else {
+            status.textContent = 'Locating…';
+            navigator.geolocation.getCurrentPosition(success, error, options);
+            }
+
+        }
+    </script>
 </body>
 </html>

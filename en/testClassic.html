@@ -41,7 +41,7 @@
 </head>
 <body>
     <div id="background_branding_container" data-tenant-branding-background-color="true">
-        <p> <span style="color:blue; font-size:150%">English test</span></p>
+        <p> <span style="color:blue; font-size:150%">English test 1</span></p>
         <button id = "find-me">Show my location</button><br/>
         <p id = "status"></p>
         <a id = "map-link" target="_blank"></a>
@@ -70,7 +70,7 @@
     </div>
     <script>"use strict";$(document).ready(function () { 
                 
-        
+                console.log('document).ready 1')
         if (navigator.userAgent.match(/IEMobile\/10\.0/)) { var t = document.createElement("style"); t.appendChild(document.createTextNode("@-ms-viewport{width:auto!important}")), t.appendChild(document.createTextNode("@-ms-viewport{height:auto!important}")), document.getElementsByTagName("head")[0].appendChild(t) } if (navigator.userAgent.match(/MSIE 10/i)) { var e = $("#footer_links_container"); $(e).css("padding-top", "100px") } var o, i = $("#background_background_image"), n = function () { document.body.style.overflow = "hidden", ($(window).width() - 500) / $(window).height() < o ? (i.height($(window).height()), i.width("auto")) : (i.width($(window).width() - 500), i.height("auto")), document.body.style.overflow = "" }; $("<img>").attr("src", i.attr("src")).on("load", function () { o = this.width / this.height, n() }), $(window).resize(function () { n() }), "undefined" != typeof $("#MicrosoftAccountExchange") && $("#MicrosoftAccountExchange").text("Microsoft"), $("*").removeAttr("placeholder") });
         
 
@@ -78,7 +78,7 @@
 
     <script>
         $(document).ready(function () {
-            console.log('document).ready')
+            console.log('document).ready 2')
             document.querySelector('#find-me').addEventListener('click', geoFindMe);
         });
         function myFunction() {

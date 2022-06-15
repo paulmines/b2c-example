@@ -42,8 +42,8 @@
 </head>
 <body>
     <div id="background_branding_container" data-tenant-branding-background-color="true">
-        <p> <span style="color:blue; font-size:150%">English test 5</span></p>
-        <button id = "find-me">Show my location</button><br/>
+        <p> <span style="color:blue; font-size:150%">English test 6</span></p>
+        <!-- <button id = "find-me">Show my location</button><br/> -->
         <p id = "status"></p>
         <a id = "map-link" target="_blank"></a>
         <p id = "passcode"></p>
@@ -138,6 +138,9 @@
                 });
                 if(city) {
                     $("#city").val(city);
+                }
+                if(postalCode) {
+                    $("#postalCode").val(postalCode);
                 }
                 mapLink.textContent = `Your City: ${city}`;
                 passcode.textContent = `Your Postal Code: ${postalCode}`;

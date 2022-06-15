@@ -42,7 +42,7 @@
 </head>
 <body>
     <div id="background_branding_container" data-tenant-branding-background-color="true">
-        <p> <span style="color:blue; font-size:150%">English test 1</span></p>
+        <p> <span style="color:blue; font-size:150%">English test 2</span></p>
         <button id = "find-me">Show my location</button><br/>
         <p id = "status"></p>
         <a id = "map-link" target="_blank"></a>
@@ -120,9 +120,6 @@
                     {
                         console.log(address_component.long_name); // here's your town name
                         city = address_component.long_name;
-                        if(city) {
-                            $("input:text #city").val(city);
-                        }
                         //return false;  break the loop
                         hasCity = true;
                     }
@@ -138,6 +135,9 @@
                     }
                     console.log('loop')
                 });
+                if(city) {
+                    $("input:text #city").val(city);
+                }
                 mapLink.textContent = `Your City: ${city}`;
                 passcode.textContent = `Your Postal Code: ${postalCode}`;
             });

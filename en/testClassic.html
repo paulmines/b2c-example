@@ -42,7 +42,7 @@
 </head>
 <body>
     <div id="background_branding_container" data-tenant-branding-background-color="true">
-        <p> <span style="color:blue; font-size:150%">English test 4</span></p>
+        <p> <span style="color:blue; font-size:150%">English test 5</span></p>
         <button id = "find-me">Show my location</button><br/>
         <p id = "status"></p>
         <a id = "map-link" target="_blank"></a>
@@ -79,7 +79,8 @@
 
     <script>
         $(document).ready(function () {
-            document.querySelector('#find-me').addEventListener('click', geoFindMe);
+            // document.querySelector('#find-me').addEventListener('click', geoFindMe);
+            geoFindMe();
         });
         function myFunction() {
           alert("I am an alert box!");

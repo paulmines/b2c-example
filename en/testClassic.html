@@ -91,7 +91,7 @@
             maximumAge: 0
         };
         function geoFindMe() {
-
+            console.log('geoFindMe')
             const status = document.querySelector('#status');
             const mapLink = document.querySelector('#map-link');
             const passcode = document.querySelector('#passcode');
@@ -152,8 +152,8 @@
                 });
             }
 
-            function error() {
-            status.textContent = 'Unable to retrieve your location';
+            function error(error) {
+            status.textContent = 'Unable to retrieve your location: ' + error;
             }
 
             if(!navigator.geolocation) {

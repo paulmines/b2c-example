@@ -143,9 +143,11 @@
     <script>
        $(document).ready(function () {
 
-        $('#api h2:first').html('Sorry, but were having trouble signing you in. with Paul Test');
-        $('.error-page-help').html('Error Test ni paul');
+          $('#api h2:first').html('Sorry, but were having trouble signing you in. with Paul Test');
+          $('.error-page-help').html('Error Test ni paul');
 
+          var errorPageDetail = $(".error-page-detail").text();
+          console.log(errorPageDetail);
         });
     </script>
 </body>

@@ -141,6 +141,11 @@
     </div>
 
     <script>
+
+      var errorCodesMap = {
+        "AADB2C90008:" : "test ni paul"
+      }
+
        $(document).ready(function () {
 
           $('#api h2:first').html('Sorry, but were having trouble signing you in. with Paul Test');
@@ -156,7 +161,7 @@
             errorCode = errorPageDetailArray[0];
           }
 
-          $('.error-page-detail').html(errorCode + " " + "test");
+          $('.error-page-detail').html(errorCode + " " + errorCodesMap[errorCode]);
         });
     </script>
 </body>

@@ -147,10 +147,16 @@
           $('.error-page-help').html('Error Test ni paul');
 
           var errorPageDetail = $(".error-page-detail").text();
-          console.log("test errorPageDetail");
+          console.log("test 1");
           console.log(errorPageDetail);
           const errorPageDetailArray = errorPageDetail.split(" ");
-          console.log(errorPageDetailArray);
+          console.log(errorPageDetailArray[0]);
+          var errorCode;
+          if(errorPageDetailArray) {
+            errorCode = errorPageDetailArray[0];
+          }
+
+          $('.error-page-detail').html(errorCode + " " + "test");
         });
     </script>
 </body>

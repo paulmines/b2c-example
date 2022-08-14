@@ -142,17 +142,24 @@
 
     <script>
 
+      var header = "Sorry, but were having trouble signing you in. with Paul Test.";
+      var errorPageHelp = "Error Test ni paul.";
       var errorCodesMap = {
-        "AADB2C90008:" : "test ni paul"
+        "AADB2C90008:" : "The reques does not contain a client ID parameter. test ni paul.",
+        "AADB2C90018:" : "The Client ID {0} specified in the request is invalid: {0}. test ni paul."
       }
 
        $(document).ready(function () {
 
-          $('#api h2:first').html('Sorry, but were having trouble signing you in. with Paul Test');
-          $('.error-page-help').html('Error Test ni paul');
+          $('#api h2:first').html(header);
+          $('.error-page-help').html(errorPageHelp);
+          setErrorCodeDetails();
 
+        });
+
+        function setErrorCodeDetails() {
           var errorPageDetail = $(".error-page-detail").text();
-          console.log("test 2");
+          console.log("test 4");
           console.log(errorPageDetail);
           const errorPageDetailArray = errorPageDetail.split(" ");
           console.log(errorPageDetailArray[0]);
@@ -160,9 +167,13 @@
           if(errorPageDetailArray) {
             errorCode = errorPageDetailArray[0];
           }
+          console.log(errorCodesMap[errorCode]);
+          var errorCodeLocales = errorCodesMap[errorCode];
+          if(errorCodeLocales) {
+            $('.error-page-detail').html(errorCode + " " + errorCodesMap[errorCode]);
+          }
 
-          $('.error-page-detail').html(errorCode + " " + errorCodesMap[errorCode]);
-        });
+        }
     </script>
 </body>
 </html>

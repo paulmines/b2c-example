@@ -145,8 +145,8 @@
       var header = "Sorry, but were having trouble signing you in. with Paul Test.";
       var errorPageHelp = "Error Test ni paul.";
       var errorCodesMap = {
-        "AADB2C90008:" : "The reques does not contain a client ID parameter. test ni paul.",
-        "AADB2C90018:" : "The Client ID {0} specified in the request is invalid: {0}. test ni paul."
+        "AADB2C90008:" : "The reques does not contain a client ID parameter. test ni paul."
+        // "AADB2C90018:" : "The Client ID {0} specified in the request is invalid: {0}. test ni paul."
       }
 
        $(document).ready(function () {
@@ -159,7 +159,7 @@
 
         function setErrorCodeDetails() {
           var errorPageDetail = $(".error-page-detail").text();
-          console.log("test 4");
+          console.log("test 5");
           console.log(errorPageDetail);
           const errorPageDetailArray = errorPageDetail.split(" ");
           console.log(errorPageDetailArray[0]);

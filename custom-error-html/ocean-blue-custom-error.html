@@ -160,6 +160,8 @@
             var headVar = $('#api h2:first').text();
             console.log('header: ', headVar);
             $('.head').html(headVar);
+            var api = document.getElementById('api');
+            api.remove();
 //          $('.error-page-help').html(errorPageHelp);
           setErrorCodeDetails();
 
@@ -167,7 +169,7 @@
 
         function setErrorCodeDetails() {
           var errorPageDetail = $(".error-page-detail").text();
-          console.log("test 2");
+          console.log("test 3");
           console.log(errorPageDetail);
           const errorPageDetailArray = errorPageDetail.split(" ");
           console.log(errorPageDetailArray[0]);

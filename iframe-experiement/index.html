@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<!--
+<meta http-equiv="Content-Security-Policy" content="default-src * self blob: data: gap:; style-src * self 'unsafe-inline' blob: data: gap:; script-src * 'self' 'unsafe-eval' 'unsafe-inline' blob: data: gap:; object-src * 'self' blob: data: gap:; img-src * self 'unsafe-inline' blob: data: gap:; connect-src self * 'unsafe-inline' blob: data: gap:; frame-src * self blob: data: gap:;"> 
+
+<meta http-equiv="Content-Security-Policy" content="default-src * self blob: data: gap:; style-src * self 'unsafe-inline' blob: data: gap:; script-src * 'self' 'unsafe-eval' 'unsafe-inline' blob: data: gap:; object-src * 'self' blob: data: gap:; img-src * self 'unsafe-inline' blob: data: gap:; connect-src self * 'unsafe-inline' blob: data: gap:; frame-src * self blob: data: gap:; frame-ancestors 'self' 'https://usb2cextstorage.blob.core.windows.net';"> 
+
+
+-->
+<meta http-equiv="Content-Security-Policy" content="default-src * self blob: data: gap:; style-src * self 'unsafe-inline' blob: data: gap:; script-src * 'self' 'unsafe-eval' 'unsafe-inline' blob: data: gap:; object-src * 'self' blob: data: gap:; img-src * self 'unsafe-inline' blob: data: gap:; connect-src self * 'unsafe-inline' blob: data: gap:; frame-src * self blob: data: gap:;">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+/* 	var token = document.getElementById('encodedToken').getElementsByClassName("jwtClaims")[0].innerHTML;
+	console.log(token)
+	$('#tokenTextarea').value = token; */
+	  $('#getToken').click(function(){
+		 console.log($('#loginframe'));
+	  })
+	});
+</script>
+</head>
+<title>iFrame Login - Index</title>
+<body>
+<p>Signin Using iFrame</p>
+<!-- <iframe id="loginframe" frameborder="0" src="https://basfborndev.b2clogin.com/basfborndev.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_POC_iFrame&client_id=5338c0c7-62cc-4b1e-90c6-a1b7cb3eff23&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fjwt.ms&scope=openid&response_type=id_token&output=embed" height="500"></iframe> -->
+<!-- 
+<iframe id="loginframe" frameborder="0" src="https://basfborndev.b2clogin.com/basfborndev.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_CPM_SIGNIN_V3&client_id=5338c0c7-62cc-4b1e-90c6-a1b7cb3eff23&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fjwt.ms&scope=openid&response_type=id_token" height="500"></iframe>
+ -->
+<!-- 
+<iframe id="loginframe" frameborder="0" src="https://basfborndev.b2clogin.com/basfborndev.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_PASSWORDCHANGE&client_id=5338c0c7-62cc-4b1e-90c6-a1b7cb3eff23&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fjwt.ms&scope=openid&response_type=id_token" height="500"></iframe>
+
+<iframe id="loginframe" frameborder="0" src="https://contosob2c5.b2clogin.com/contosob2c5.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1_PasswordReset&client_id=c957a8eb-23c1-4900-a0c7-602e83f7193f&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fjwt.ms&scope=openid&response_type=code" height="500"></iframe>
+-->
+
+<iframe id="loginframe" frameborder="0" src="https://basfborndev.b2clogin.com/basfborndev.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_PASSWORDCHANGE&client_id=5338c0c7-62cc-4b1e-90c6-a1b7cb3eff23&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fjwt.ms&scope=openid&response_type=id_token" height="500"></iframe>
+
+<input type="button" id="getToken" value="Get Token"/>
+<textarea id="tokenTextarea">
+</textarea>
+</body>
+</html>
